@@ -1,0 +1,317 @@
+<script lang="ts" setup>
+import { Group as VGroup, Rect as VRect, RegularPolygon as VRegularPolygon, Circle as VCircle, Text as VText, type VueKonvaRef, Shape as VShape } from 'vue-konva';
+import {Shape} from 'konva/lib/Shape'
+import Beam from '../beam.vue';
+import type Konva from 'konva';
+
+const props = defineProps({
+    id: {
+        type: String,
+        required: true
+    },
+    initialPosition: {
+        type: Object as PropType<{x: number, y: number}>,
+        default: {
+            x: 0,
+            y: 0
+        }
+    },
+    initialRotation: {
+        type: Number as PropType<0 | 90 | 180 | 270>,
+        default: 0
+    },
+    type: {
+        type: String as PropType<'2-way-corner' | '3-way-corner' | '4-way-corner'>,
+        required: true
+    },
+    snapType: {
+        type: String as PropType<'regular' | 'none'>,
+        required: false,
+        default: 'none'
+    },
+    draggingDisabled: {
+        type: Boolean,
+        default: false
+    },
+    selected: {
+        type: Boolean,
+        default: false
+    }
+})
+
+const _snapPointRefs = ref<Ref<VueKonvaRef<Shape>>[]>([])
+for (let i = 1; i <= 8; i++) {
+    // @ts-expect-error-next-line
+    _snapPointRefs.value.push(useTemplateRef(`${props.id}_${i}`))
+}
+const snapPointRefs = computed(() => _snapPointRefs.value.filter((ref) => ref.value).map((ref) => ref.value))
+const groupRef = useTemplateRef<VueKonvaRef<Group>>('group')
+const node = computed(() => {
+    return groupRef.value?.getNode()!
+})
+
+const getSnapPoints = (): SnapPoint[] => {
+    return  (snapPointRefs.value?? []).map((ref) => {
+        const snapNode = ref.getNode()
+        return {
+            id: snapNode.getAttr('id')!,
+            direction: snapNode.getAttr('direction') as SnapPoint['direction'],
+            x: ref.getNode().absolutePosition().x,
+            y: ref.getNode().absolutePosition().y,
+            type: snapNode.getAttr('connectorType') as SnapPoint['type'],
+            offsetToParent: {
+                x: node.value.getAbsolutePosition().x - snapNode.getAbsolutePosition().x,
+                y: node.value.getAbsolutePosition().y - snapNode.getAbsolutePosition().y
+            },
+            node: snapNode
+        }
+    })
+}
+
+const isDragging = ref(false)
+
+
+const highLightedConnection = ref<string | null>(null)
+
+const highlightSnapPoint = (id : string | null) =>{
+    highLightedConnection.value = id
+}
+
+const rotation = ref(0)
+const rotate = () => {
+    rotation.value = (rotation.value + 90) % 360
+}
+
+const centerSize = BEAMWIDTH;
+const sideRectWidth = 10.5
+
+
+const strokeConfig = computed(() => {
+    return {
+        stroke: props.selected ? STROKESELECTEDCOLOR : STROKECOLOR,
+        strokeWidth: props.selected ? STROKESELECTEDWIDTH : STROKEWIDTH
+    }
+})
+
+const enabledConnectors = computed(()=>{
+    return {
+        left: props.type === '4-way-corner',
+        bottom: props.type === '4-way-corner' || props.type === '3-way-corner',
+        top: true,
+        right: true
+    }
+})
+
+const sceneFunc = (ctx: Konva.Context, shape: Konva.Shape) => {
+
+    if (enabledConnectors.value.left) {
+        //Left rect
+        ctx.beginPath();
+        ctx.rect(-BEAMWIDTH / 2 - sideRectWidth, -BEAMWIDTH / 2, sideRectWidth, BEAMWIDTH)
+        ctx.fillStrokeShape(shape);
+        //Left connector
+        ctx.beginPath();
+        ctx.rect(BEAMWIDTH / 2 - 75 + sideRectWidth, (-BEAMWIDTH / 2) + 2, 25, BEAMWIDTH - 4)
+        ctx.fillStrokeShape(shape);
+    }
+
+    if (enabledConnectors.value.right) {
+        //Right rect
+        ctx.beginPath();
+        ctx.rect(BEAMWIDTH / 2, -BEAMWIDTH / 2, sideRectWidth, BEAMWIDTH)
+        ctx.fillStrokeShape(shape);
+
+        //Right connector
+        ctx.beginPath();
+        ctx.rect(BEAMWIDTH / 2 + sideRectWidth, (-BEAMWIDTH / 2) + 2, 25, BEAMWIDTH - 4)
+        ctx.fillStrokeShape(shape);
+    }
+
+    if (enabledConnectors.value.top) {
+        //Top rect
+        ctx.beginPath();
+        ctx.rect(-BEAMWIDTH / 2, -BEAMWIDTH / 2 - sideRectWidth, BEAMWIDTH, sideRectWidth)
+        ctx.fillStrokeShape(shape);
+
+        //Top connector
+        ctx.beginPath();
+        ctx.rect(-BEAMWIDTH / 2 + 2, -BEAMWIDTH / 2 - sideRectWidth - 25, BEAMWIDTH - 4, 25)
+        ctx.fillStrokeShape(shape);
+    }
+
+    if (enabledConnectors.value.bottom) {
+        //Bottom rect
+        ctx.beginPath();
+        ctx.rect(-BEAMWIDTH / 2, BEAMWIDTH / 2, BEAMWIDTH, sideRectWidth)
+        ctx.fillStrokeShape(shape);
+
+        //Bottom connector
+        ctx.beginPath();
+        ctx.rect(-BEAMWIDTH / 2 + 2, BEAMWIDTH / 2 + sideRectWidth, BEAMWIDTH - 4, 25)
+        ctx.fillStrokeShape(shape);
+    }
+
+    // Center block
+    ctx.beginPath();
+    ctx.rect(
+        -centerSize / 2,
+        -centerSize / 2,
+        centerSize,
+        centerSize
+    );
+    ctx.fillStrokeShape(shape);
+
+    if (enabledConnectors.value.left) {
+        // Left screw hole
+        ctx.beginPath();
+        ctx.ellipse(BEAMWIDTH / 2 - 75 + sideRectWidth + 12.5, (-BEAMWIDTH / 2) + 2 + 6, 2, 2, 0, 0, 360)
+        ctx.fillStyle = 'white';
+        ctx.fill();
+    }
+
+    if (enabledConnectors.value.right) {
+        // Right screw hole
+        ctx.beginPath();
+        ctx.ellipse(BEAMWIDTH / 2 + sideRectWidth + 12.5, (-BEAMWIDTH / 2) + 2 + 6, 2, 2, 0, 0, 360)
+        ctx.fillStyle = 'white';
+        ctx.fill();
+    }
+
+    if (enabledConnectors.value.top) {
+        // Top screw hole
+        ctx.beginPath();
+        ctx.ellipse(-BEAMWIDTH / 2 + 2 + 6, -BEAMWIDTH / 2 - sideRectWidth - 12.5, 2, 2, 0, 0, 360)
+        ctx.fillStyle = 'white';
+        ctx.fill();
+    }
+
+    if (enabledConnectors.value.bottom) {
+        // Bottom screw hole
+        ctx.beginPath();
+        ctx.ellipse(-BEAMWIDTH / 2 + 2 + 6, BEAMWIDTH / 2 + sideRectWidth + 12.5, 2, 2, 0, 0, 360)
+        ctx.fillStyle = 'white';
+        ctx.fill();
+    }
+
+};
+
+const emit = defineEmits<{
+    dragging: [isDragging: boolean]
+    clicked: []
+}>()
+
+
+defineExpose<ExposePartInstance>({
+    id: props.id,
+    getSnapPoints,
+    highlightSnapPoint,
+    isDragging,
+    node,
+    rotate,
+    partType: 'beam'
+})
+</script>
+<template>
+    <v-group 
+        ref="group"
+        :config="({
+            draggable: !props.draggingDisabled,
+            x: initialPosition.x,
+            y: initialPosition.y,
+                rotation: rotation,
+        } as GroupConfig)" 
+        @dragstart="isDragging = true; emit('dragging', true)"
+        @dragend="isDragging = false; emit('dragging', false)" 
+        @dragmove=" emit('dragging', true)"
+        @click="emit('clicked')">
+
+        <v-shape :config="({
+            fill: BEAM.color,
+            stroke: strokeConfig.stroke,
+            strokeWidth: strokeConfig.strokeWidth,
+            sceneFunc: sceneFunc
+        }as ShapeConfig)">
+
+        </v-shape>
+
+        <v-regular-polygon 
+            v-if="snapType === 'regular'"
+            :ref="`${id}_1`" 
+            :id=" `${id}_1`" , 
+            :config="{
+                id: `${id}_1`,
+                x: 0,
+                y: 0,
+                sides: 8,
+                radius: 11,
+                rotation: 45 / 2,
+                fill: SNAPCOLOR,
+                connectorType: 'snap'
+            }" 
+        />
+        <v-circle 
+            v-if="enabledConnectors.right"
+            :ref="`${id}_2`" 
+            :id=" `${id}_2`" 
+            :config="{
+                id: `${id}_2`, 
+                x: BEAMWIDTH / 2 + sideRectWidth,
+                y: 0,
+                radius: 10,
+                opacity: 0.5,
+                connectorType: 'male',
+                fill: highLightedConnection === `${id}_2` ? CON_HL_COLOR : undefined,
+                direction: (90 + rotation) % 360,
+                isSnap : false,
+            }"
+        />
+        <v-circle 
+            v-if="enabledConnectors.left"
+            :ref="`${id}_3`" 
+            :id=" `${id}_3`"  
+            :config="{
+                id: `${id}_3`, 
+                x: -BEAMWIDTH / 2 - sideRectWidth,
+                y: 0,
+                radius: 10,
+                opacity: 0.5,
+                connectorType: 'male',
+                fill: highLightedConnection === `${id}_3` ? CON_HL_COLOR : undefined,
+                direction: (270 + rotation) % 360,
+                isSnap : false,
+            }" 
+        />
+        <v-circle 
+             v-if="enabledConnectors.top"
+            :ref="`${id}_4`" 
+            :id=" `${id}_4`" 
+            :config="{
+                id: `${id}_4`, 
+                y: -BEAMWIDTH / 2 - sideRectWidth,
+                x: 0,
+                radius: 10,
+                opacity: 0.5,
+                connectorType: 'male',
+                fill: highLightedConnection === `${id}_4` ? CON_HL_COLOR : undefined,
+                direction: (0 + rotation) % 360,
+                isSnap : false,
+            }" 
+        />
+        <v-circle 
+            v-if="enabledConnectors.bottom"
+            :ref="`${id}_5`" 
+            :id=" `${id}_5`"  
+                :config="{
+                    id: `${id}_5`, 
+                    y: BEAMWIDTH / 2 + sideRectWidth,
+                    x: 0,
+                    radius: 10,
+                    opacity: 0.5,
+                    connectorType: 'male',
+                    fill: highLightedConnection === `${id}_5` ? CON_HL_COLOR : undefined,
+                    direction: (180 + rotation) % 360,
+                    isSnap : false,
+                }" 
+        />
+    </v-group>
+</template>
