@@ -113,6 +113,11 @@ const rectConfig: RectConfig = computed(() => {
     }
 })
 
+const {
+    setConnectorLayer,
+    unSetConnectorLayer,
+    updateConnectorPositions
+} = useConnectorLayer(node, rotation)
 
 const emit = defineEmits<{
     dragging: [isDragging: boolean]
@@ -125,8 +130,12 @@ defineExpose<ExposePartInstance>({
     isDragging,
     node,
     rotate,
-    partType: 'beam'
+    partType: 'beam',
+    setConnectorLayer,
+    unSetConnectorLayer,
+    updateConnectorPositions
 })
+
 
 </script>
 <template>
@@ -141,7 +150,7 @@ defineExpose<ExposePartInstance>({
         }"  
         @dragstart="isDragging = true; emit('dragging', true)" 
         @dragend="isDragging = false; emit('dragging', false)"
-        @dragmove=" emit('dragging', true)"
+        @dragmove="emit('dragging', true)"
         @click="emit('clicked')"
         >
         <v-rect :config="rectConfig"/>
@@ -246,7 +255,8 @@ defineExpose<ExposePartInstance>({
         </template>
         <template v-if="type === 'female-male' || type === 'male-male'">
             <v-group :config="{name:'connector'}">
-                <v-rect :config="{
+                <v-rect 
+                    :config="{
                     x: 2,
                     y: -25,
                     width: BEAMWIDTH - 4,

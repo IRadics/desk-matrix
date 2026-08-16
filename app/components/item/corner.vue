@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { Group as VGroup, Rect as VRect, RegularPolygon as VRegularPolygon, Circle as VCircle, Text as VText, type VueKonvaRef, Shape as VShape } from 'vue-konva';
-import {Shape} from 'konva/lib/Shape'
-import Beam from '../beam.vue';
+import { Group as VGroup, Rect as VRect, RegularPolygon as VRegularPolygon, Circle as VCircle, Text as VText, type VueKonvaRef, Shape as VShape, Layer as Vlayer } from 'vue-konva';
+import { Shape } from 'konva/lib/Shape'
 import type Konva from 'konva';
 
 const props = defineProps({
@@ -10,7 +9,7 @@ const props = defineProps({
         required: true
     },
     initialPosition: {
-        type: Object as PropType<{x: number, y: number}>,
+        type: Object as PropType<{ x: number, y: number }>,
         default: {
             x: 0,
             y: 0
@@ -51,7 +50,7 @@ const node = computed(() => {
 })
 
 const getSnapPoints = (): SnapPoint[] => {
-    return  (snapPointRefs.value?? []).map((ref) => {
+    return (snapPointRefs.value ?? []).map((ref) => {
         const snapNode = ref.getNode()
         return {
             id: snapNode.getAttr('id')!,
@@ -70,16 +69,21 @@ const getSnapPoints = (): SnapPoint[] => {
 
 const isDragging = ref(false)
 
-
-const highLightedConnection = ref<string | null>(null)
-
-const highlightSnapPoint = (id : string | null) =>{
-    highLightedConnection.value = id
-}
-
 const rotation = ref(0)
 const rotate = () => {
     rotation.value = (rotation.value + 90) % 360
+}
+
+const {
+    setConnectorLayer,
+    unSetConnectorLayer,
+    updateConnectorPositions,
+} = useConnectorLayer(node, rotation)
+
+const highLightedConnection = ref<string | null>(null)
+
+const highlightSnapPoint = (id: string | null) => {
+    highLightedConnection.value = id
 }
 
 const centerSize = BEAMWIDTH;
@@ -93,7 +97,7 @@ const strokeConfig = computed(() => {
     }
 })
 
-const enabledConnectors = computed(()=>{
+const enabledConnectors = computed(() => {
     return {
         left: props.type === '4-way-corner',
         bottom: props.type === '4-way-corner' || props.type === '3-way-corner',
@@ -109,21 +113,12 @@ const sceneFunc = (ctx: Konva.Context, shape: Konva.Shape) => {
         ctx.beginPath();
         ctx.rect(-BEAMWIDTH / 2 - sideRectWidth, -BEAMWIDTH / 2, sideRectWidth, BEAMWIDTH)
         ctx.fillStrokeShape(shape);
-        //Left connector
-        ctx.beginPath();
-        ctx.rect(BEAMWIDTH / 2 - 75 + sideRectWidth, (-BEAMWIDTH / 2) + 2, 25, BEAMWIDTH - 4)
-        ctx.fillStrokeShape(shape);
     }
 
     if (enabledConnectors.value.right) {
         //Right rect
         ctx.beginPath();
         ctx.rect(BEAMWIDTH / 2, -BEAMWIDTH / 2, sideRectWidth, BEAMWIDTH)
-        ctx.fillStrokeShape(shape);
-
-        //Right connector
-        ctx.beginPath();
-        ctx.rect(BEAMWIDTH / 2 + sideRectWidth, (-BEAMWIDTH / 2) + 2, 25, BEAMWIDTH - 4)
         ctx.fillStrokeShape(shape);
     }
 
@@ -132,22 +127,12 @@ const sceneFunc = (ctx: Konva.Context, shape: Konva.Shape) => {
         ctx.beginPath();
         ctx.rect(-BEAMWIDTH / 2, -BEAMWIDTH / 2 - sideRectWidth, BEAMWIDTH, sideRectWidth)
         ctx.fillStrokeShape(shape);
-
-        //Top connector
-        ctx.beginPath();
-        ctx.rect(-BEAMWIDTH / 2 + 2, -BEAMWIDTH / 2 - sideRectWidth - 25, BEAMWIDTH - 4, 25)
-        ctx.fillStrokeShape(shape);
     }
 
     if (enabledConnectors.value.bottom) {
         //Bottom rect
         ctx.beginPath();
         ctx.rect(-BEAMWIDTH / 2, BEAMWIDTH / 2, BEAMWIDTH, sideRectWidth)
-        ctx.fillStrokeShape(shape);
-
-        //Bottom connector
-        ctx.beginPath();
-        ctx.rect(-BEAMWIDTH / 2 + 2, BEAMWIDTH / 2 + sideRectWidth, BEAMWIDTH - 4, 25)
         ctx.fillStrokeShape(shape);
     }
 
@@ -160,38 +145,6 @@ const sceneFunc = (ctx: Konva.Context, shape: Konva.Shape) => {
         centerSize
     );
     ctx.fillStrokeShape(shape);
-
-    if (enabledConnectors.value.left) {
-        // Left screw hole
-        ctx.beginPath();
-        ctx.ellipse(BEAMWIDTH / 2 - 75 + sideRectWidth + 12.5, (-BEAMWIDTH / 2) + 2 + 6, 2, 2, 0, 0, 360)
-        ctx.fillStyle = 'white';
-        ctx.fill();
-    }
-
-    if (enabledConnectors.value.right) {
-        // Right screw hole
-        ctx.beginPath();
-        ctx.ellipse(BEAMWIDTH / 2 + sideRectWidth + 12.5, (-BEAMWIDTH / 2) + 2 + 6, 2, 2, 0, 0, 360)
-        ctx.fillStyle = 'white';
-        ctx.fill();
-    }
-
-    if (enabledConnectors.value.top) {
-        // Top screw hole
-        ctx.beginPath();
-        ctx.ellipse(-BEAMWIDTH / 2 + 2 + 6, -BEAMWIDTH / 2 - sideRectWidth - 12.5, 2, 2, 0, 0, 360)
-        ctx.fillStyle = 'white';
-        ctx.fill();
-    }
-
-    if (enabledConnectors.value.bottom) {
-        // Bottom screw hole
-        ctx.beginPath();
-        ctx.ellipse(-BEAMWIDTH / 2 + 2 + 6, BEAMWIDTH / 2 + sideRectWidth + 12.5, 2, 2, 0, 0, 360)
-        ctx.fillStyle = 'white';
-        ctx.fill();
-    }
 
 };
 
@@ -208,7 +161,10 @@ defineExpose<ExposePartInstance>({
     isDragging,
     node,
     rotate,
-    partType: 'beam'
+    partType: 'beam',
+    setConnectorLayer,
+    unSetConnectorLayer,
+    updateConnectorPositions,
 })
 </script>
 <template>
@@ -233,6 +189,93 @@ defineExpose<ExposePartInstance>({
         }as ShapeConfig)">
 
         </v-shape>
+
+        <v-group 
+            v-if="enabledConnectors.left"
+            :config="{name:'connector'}">
+            <v-rect 
+                :config="{
+                x: BEAMWIDTH / 2 - 75 + sideRectWidth,
+                y: (-BEAMWIDTH / 2) + 2,
+                width: 25,
+                height: BEAMWIDTH - 4,
+                fill: BEAM.color,
+                stroke: strokeConfig.stroke,
+                strokeWidth: strokeConfig.strokeWidth,
+            }" 
+            />
+            <v-circle :config="{
+                x: BEAMWIDTH / 2 - 75 + sideRectWidth + 12.5, 
+                y: (-BEAMWIDTH / 2) + 2 + 6,
+                radius: 2, 
+                fill: 'white'
+            }"
+            />
+        </v-group>
+        <v-group 
+            v-if="enabledConnectors.right"
+            :config="{name:'connector'}">
+            <v-rect 
+                :config="{
+                x: BEAMWIDTH / 2 + sideRectWidth,
+                y: (-BEAMWIDTH / 2) + 2,
+                width: 25,
+                height: BEAMWIDTH - 4,
+                fill: BEAM.color,
+                stroke: strokeConfig.stroke,
+                strokeWidth: strokeConfig.strokeWidth,
+            }" 
+            />
+            <v-circle :config="{
+                x: BEAMWIDTH / 2 + sideRectWidth + 12.5, 
+                y: (-BEAMWIDTH / 2) + 2 + 6,
+                radius: 2, 
+                fill: 'white'
+            }"/>
+        </v-group>
+
+        <v-group 
+            v-if="enabledConnectors.top"
+            :config="{name:'connector'}">
+            <v-rect 
+                :config="{
+                x: -BEAMWIDTH / 2 + 2,
+                y: -BEAMWIDTH / 2 - sideRectWidth - 25,
+                width: BEAMWIDTH - 4,
+                height: 25,
+                fill: BEAM.color,
+                stroke: strokeConfig.stroke,
+                strokeWidth: strokeConfig.strokeWidth,
+            }" 
+            />
+            <v-circle :config="{
+                x: -BEAMWIDTH / 2 + 2 + 6, 
+                y: -BEAMWIDTH / 2 - sideRectWidth - 12.5,
+                radius: 2, 
+                fill: 'white'
+            }"/>
+        </v-group>
+        <v-group 
+            v-if="enabledConnectors.bottom"
+            :config="{name:'connector'}">
+            <v-rect 
+                :config="{
+                x: -BEAMWIDTH / 2 + 2,
+                y: BEAMWIDTH / 2 + sideRectWidth,
+                width: BEAMWIDTH - 4,
+                height: 25,
+                fill: BEAM.color,
+                stroke: strokeConfig.stroke,
+                strokeWidth: strokeConfig.strokeWidth,
+            }" 
+            />
+            <v-circle :config="{
+                x: -BEAMWIDTH / 2 + 2 + 6, 
+                y: BEAMWIDTH / 2 + sideRectWidth + 12.5,
+                radius: 2, 
+                fill: 'white'
+            }"/>
+        </v-group>
 
         <v-regular-polygon 
             v-if="snapType === 'regular'"

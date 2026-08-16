@@ -43,6 +43,9 @@ const partNodes = computed(()=> groupData.value.map((p)=>p.node))
 
 onMounted(() => {
     groupNode.value.add(...partNodes.value)
+    groupData.value.forEach((d)=>{
+        d.componentRef.setConnectorLayer? d.componentRef.setConnectorLayer() : null
+    })
     moveBoardsToTop()
 })
 
@@ -54,19 +57,31 @@ const moveBoardsToTop = async () =>{
     }
 }
 
-watch(partNodes, (newParts, oldParts) => {
+watch(groupData, (newValue, oldValue) => {
+    const newNodes = newValue.map((v)=>v.node)
+    const oldNodes = oldValue.map((v)=>v.node)
+
     // Remove old parts that are no longer in the new parts array
-    oldParts.forEach(oldPart => {
-        if(!newParts.includes(oldPart)) {
-            recoverPosition(oldPart)
-            props.mainGroupNode.add(oldPart)
+    oldValue.forEach(oldPart => {
+        if(!newNodes.map(n=>n._id).includes(oldPart.node._id)) {
+            recoverPosition(oldPart.node)
+            props.mainGroupNode.add(oldPart.node)
+            if(oldPart.componentRef.unSetConnectorLayer) {
+                oldPart.componentRef.unSetConnectorLayer()
+            }
         }
     })
+
     // Add new parts that are not already in the group
-    newParts.forEach(newPart => {
-        if(!oldParts.includes(newPart)) {
-            setNewPartPosition(newPart)
-            groupNode.value.add(newPart)
+    newValue.forEach(newPart => {
+
+        if(!oldNodes.map(node=>node._id).includes(newPart.node._id)) {
+            setNewPartPosition(newPart.node)
+            groupNode.value.add(newPart.node)
+            if (newPart.componentRef.setConnectorLayer) {
+                newPart.componentRef.setConnectorLayer()
+            }
+
         }
     })
 
@@ -78,7 +93,16 @@ onBeforeUnmount(() => {
         recoverPosition(part)
     })
     props.mainGroupNode.add(...partNodes.value)
+    groupData.value.forEach((d) => {
+        d.componentRef.unSetConnectorLayer ? d.componentRef.unSetConnectorLayer() : null
+    })
 })
+
+const onDrag = () => {
+    groupData.value.filter((d) => Boolean(d.componentRef.updateConnectorPositions)).forEach((d) => {
+        d.componentRef.updateConnectorPositions!()
+    })
+}
 
 const isDragging = ref(false)
 const emit = defineEmits<{
@@ -93,6 +117,6 @@ const emit = defineEmits<{
         :config="{draggable: !props.dragDisabled}"         
         @dragstart="isDragging = true; emit('dragging', true)" 
         @dragend="isDragging = false; emit('dragging', false)"
-        @dragmove=" emit('dragging', true)"
+        @dragmove="onDrag(); emit('dragging', true)"
     />
 </template>

@@ -270,7 +270,10 @@ const onDragging = (isDragging: boolean, partId: string, disableHighlightSearch?
           }
           basePartData.group = groupName
 
-          groups.value[groupName].push({part: basePartData, node: basePart.node})
+          groups.value[groupName] = [
+            ...groups.value[groupName] ?? [],
+            {part: basePartData, node: basePart.node, componentRef: basePart}
+          ]
           selectedItemGroup.value = groupName
           selectedPart.value = null
 
@@ -284,8 +287,8 @@ const onDragging = (isDragging: boolean, partId: string, disableHighlightSearch?
         closestPartData.group = groupName
         
         groups.value[groupName] = [
-            {part: basePartData, node: basePart.node},
-            {part: closestPartData!, node: snapToPart?.node}
+            {part: basePartData, node: basePart.node, componentRef: basePart},
+            {part: closestPartData!, node: snapToPart?.node, componentRef: snapToPart},
         ]
 
         selectedItemGroup.value = groupName
@@ -317,6 +320,8 @@ const moveBoardsToTop = async() => {
 onKeyStroke
   ('r', (e) => {
     if (selectedPart.value) {
+      const isInGroup = !!parts.value.find((p)=> p.id === selectedPart.value)?.group
+      if(isInGroup) return;
       const part = partRefs.value?.find(part => part.id === selectedPart.value)
       if (part && part.rotate) {
         part.rotate()
@@ -324,6 +329,16 @@ onKeyStroke
     }
     e.preventDefault()
   })
+
+
+const {setLayer} = useConnectorLayer()
+const connectorLayer = useTemplateRef<VueKonvaRef<Layer>>('connectorLayer');
+
+watch(connectorLayer,()=>{
+  if(connectorLayer.value?.getNode()) {
+    setLayer(connectorLayer.value?.getNode())
+  }
+},{once: true})
 
 </script>
 
@@ -333,6 +348,10 @@ onKeyStroke
         :config="stageSize"
         @click="onStageClicked"
         >
+        <v-layer
+          id="connectorLayer"
+          ref="connectorLayer"
+        />
         <v-layer >
             <ItemGroup v-for="(group, id) in groups" :key="id" 
               ref="groupRef" 

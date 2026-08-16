@@ -1,4 +1,6 @@
 export type PartType = 'beam' | '2-way-corner' | '3-way-corner' | '4-way-corner' |  'clamp' | 'board'
+import type { Node } from 'konva/lib/Node'
+import type { Vector2d } from 'konva/lib/types'
 import type { ShallowUnwrapRef } from 'vue'
 
 export type RefLike<T> = Ref<T> | ComputedRef<T>
@@ -39,10 +41,21 @@ export type ExposePartInstance = {
     node: RefLike<Group>
     rotate?: () => void
     partType: PartType
+    setConnectorLayer?: () => void
+    unSetConnectorLayer?: () => void
+    updateConnectorPositions?: ()=>void
 }
 
 export type PartInstance = ShallowUnwrapRef<ExposePartInstance>
 
 export type GroupData = {
-     part: Part, node: Group 
+     part: Part, 
+     node: Group,
+     componentRef: PartInstance
 }[];
+
+export type ConnectorData = {
+    node: Node,
+    offsetPosition: Vector2d,
+    originalParent: Node
+}
