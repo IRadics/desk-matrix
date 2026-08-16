@@ -142,10 +142,10 @@ const searchConnection = useThrottleFn((basePartId: string ,excludeBoard?: boole
   })
 
   if (closestDistance <= snapDistance && closestPart) {
-    basePart.highlightSnapPoint(closestBaseSnap.id)
-    closestPart.highlightSnapPoint(closestSnap.id)
-    activeBaseSnapPoint.value = { partId: basePartId, snapPoint: closestBaseSnap }
-    activePartSnapPoint.value = { partId: closestPart.id, snapPoint: closestSnap }
+    basePart.highlightSnapPoint(closestBaseSnap!.id)
+    closestPart.highlightSnapPoint(closestSnap!.id)
+    activeBaseSnapPoint.value = { partId: basePartId, snapPoint: closestBaseSnap! }
+    activePartSnapPoint.value = { partId: closestPart.id, snapPoint: closestSnap! }
   } else {
     basePart.highlightSnapPoint(null)
     if (closestPart) {
@@ -191,6 +191,32 @@ const movePartToTop = async (partId: string) =>{
   partRefs.value?.find((r)=>r.id === partId)?.node.moveToTop()
 }
 
+const removePartFromGroup = (id: string) => {
+
+  const partData = parts.value.find(p => p.id === id)
+  if (!partData) return;
+
+  const groupName = partData.group
+  partData.group = undefined
+
+  if (groupName) {
+
+    if (!groups.value[groupName]) {
+      console.error('Group data not found')
+      return
+    }
+    groups.value[groupName] = groups.value[groupName].filter(g => g.part.id !== selectedPart.value)
+
+    if ((groups.value[groupName].length ?? 0) <= 1) {
+      groups.value = Object.fromEntries(Object.entries(groups.value).filter(([key]) => key !== groupName))
+      parts.value.filter(part => part.group === groupName).forEach(part => {
+        part.group = undefined
+      })
+    }
+  }
+
+}
+
 const snapPart = (basePart: PartInstance, targetPart: PartInstance, baseSnapPoint: SnapPoint, targetSnapPoint: SnapPoint ) => {
     basePart.node.setPosition({
         x: targetSnapPoint.x + baseSnapPoint.offsetToParent.x, 
@@ -208,25 +234,7 @@ const onGroupDragging =(isDragging: boolean, group: GroupData) => {
         console.error('onGroupDragging: Part data not found')
           return
       }
-      const groupName = partData.group
-      partData.group = undefined
-      if(groupName) {
-
-          if(!groups.value[groupName]) {
-            console.error('onGroupDragging: Group data not found')
-              return
-          }
-
-        groups.value[groupName] = groups.value[groupName].filter(g => g.part.id !== selectedPart.value)
-
-        if ((groups.value[groupName].length ?? 0) <= 1) {
-          groups.value = Object.fromEntries(Object.entries(groups.value).filter(([key]) => key !== groupName))
-          parts.value.filter(part => part.group === groupName).forEach(part => {
-            part.group = undefined
-          })
-        }
-
-      } 
+      removePartFromGroup(selectedPart.value)
   } 
 }
 
@@ -325,6 +333,25 @@ onKeyStroke
       const part = partRefs.value?.find(part => part.id === selectedPart.value)
       if (part && part.rotate) {
         part.rotate()
+      }
+    }
+    e.preventDefault()
+  })
+
+
+
+onKeyStroke
+  ('Delete', (e) => {
+    if (selectedPart.value && !selectedItemGroup.value) {
+      removePartFromGroup(selectedPart.value);
+      parts.value = parts.value.filter((p) => p.id !== selectedPart.value)
+    } else if (!selectedPart.value && selectedItemGroup.value) {
+      if (confirm('Do you really want to delete the whole group?')) {
+        const partsFiltered = parts.value.filter(p => p.group !== selectedItemGroup.value)
+        parts.value.filter(p => p.group === selectedItemGroup.value).forEach((p) => {
+          removePartFromGroup(p.id)
+        })
+        parts.value = partsFiltered
       }
     }
     e.preventDefault()
