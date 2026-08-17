@@ -130,8 +130,8 @@ watch(()=>props.selected,(value)=>{
         ref="group"
         :config="({
             draggable: !props.draggingDisabled, 
-        x: initialPosition.x,
-        y: initialPosition.y,
+            x: initialPosition.x,
+            y: initialPosition.y,
         }) as GroupConfig"
         @dragstart="isDragging = true; emit('dragging', true)" 
         @dragend="isDragging = false; emit('dragging', false)"

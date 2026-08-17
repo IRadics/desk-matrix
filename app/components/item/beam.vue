@@ -1,7 +1,54 @@
 <script setup lang="ts">
-
 import { Group as VGroup, Rect as VRect, RegularPolygon as VRegularPolygon, Circle as VCircle, Text as VText, type VueKonvaRef, } from 'vue-konva';
-import {Shape} from 'konva/lib/Shape'
+import {Shape,} from 'konva/lib/Shape'
+import  Konva from 'konva';
+
+function rotateAroundLocalPoint(
+  node: Konva.Node,
+  pivot: { x: number; y: number },
+  degrees: number,
+  targetPosition?: { x: number; y: number },
+) {
+  // Current absolute position of the local pivot
+  const pivotBefore = node
+    .getAbsoluteTransform()
+    .point(pivot);
+
+  // Rotate the node
+  node.rotation(node.rotation() + degrees);
+
+  // Position of the same local pivot after rotation
+  const pivotAfter = node
+    .getAbsoluteTransform()
+    .point(pivot);
+
+  // Where we want the pivot to be.
+  // If omitted, keep its original position.
+  const target = targetPosition ?? pivotBefore;
+
+  // Required movement of the pivot in absolute coordinates
+  const dx = target.x - pivotAfter.x;
+  const dy = target.y - pivotAfter.y;
+
+  const parent = node.getParent();
+
+  if (!parent) {
+    node.x(node.x() + dx);
+    node.y(node.y() + dy);
+    return;
+  }
+
+  // Convert the absolute movement into the parent's coordinate system
+  const parentTransform = parent.getAbsoluteTransform();
+  const inverse = parentTransform.copy().invert();
+
+  const p1 = inverse.point({ x: 0, y: 0 });
+  const p2 = inverse.point({ x: dx, y: dy });
+
+  node.x(node.x() + p2.x - p1.x);
+  node.y(node.y() + p2.y - p1.y);
+}
+
 
 const props = defineProps({
     id: {
@@ -87,6 +134,12 @@ const highlightSnapPoint = (id : string | null) =>{
 const rotation = ref<number>(props.initialRotation)
 const rotate = () => {
     rotation.value = (rotation.value + 90) % 360
+    rotateAroundLocalPoint(node.value, {
+        x: BEAMWIDTH / 2,
+        y: beamLength.value / 2,
+    }, 90,
+    node.value.getStage()?.getRelativePointerPosition() ?? undefined
+)
 }
 
 const getTextWidth = (): number => {
@@ -140,14 +193,12 @@ defineExpose<ExposePartInstance>({
 </script>
 <template>
     <v-group ref="group" 
-        :config="{
+        :config="({
             draggable: !props.draggingDisabled, 
-            rotation: rotation, 
-            offsetX: BEAMWIDTH / 2, 
-            offsetY: beamLength / 2,
+            rotation: rotation,
             x: initialPosition.x,
-            y: initialPosition.y
-        }"  
+            y: initialPosition.y,
+        } as GroupConfig)"  
         @dragstart="isDragging = true; emit('dragging', true)" 
         @dragend="isDragging = false; emit('dragging', false)"
         @dragmove="emit('dragging', true)"
@@ -253,28 +304,28 @@ defineExpose<ExposePartInstance>({
                 }"
         />
         </template>
-        <template v-if="type === 'female-male' || type === 'male-male'">
-            <v-group :config="{name:'connector'}">
-                <v-rect 
-                    :config="{
-                    x: 2,
-                    y: -25,
-                    width: BEAMWIDTH - 4,
-                    height: 25,
-                    fill: BEAM.color,
-                    stroke: strokeConfig.stroke,
-                    strokeWidth: strokeConfig.strokeWidth,
-                }" 
-                />
-                <v-circle :config="{
-                    x: 6, 
-                    y: -12.5,
-                    radius: 2, 
-                    fill: 'white'
-                }"
-                />
-             </v-group>
-        </template>
+        <v-group 
+            v-if="type === 'female-male' || type === 'male-male'"
+            :config="{name:'connector'}">
+            <v-rect 
+                :config="{
+                x: 2,
+                y: -25,
+                width: BEAMWIDTH - 4,
+                height: 25,
+                fill: BEAM.color,
+                stroke: strokeConfig.stroke,
+                strokeWidth: strokeConfig.strokeWidth,
+            }" 
+            />
+            <v-circle :config="{
+                x: 6, 
+                y: -12.5,
+                radius: 2, 
+                fill: 'white'
+            }"
+            />
+        </v-group>
         <v-circle 
             :ref="`${id}_7`" 
             :id=" `${id}_7`",
@@ -290,27 +341,27 @@ defineExpose<ExposePartInstance>({
                 isSnap : false,
             }"
         />
-        <template v-if="type === 'male-female' || type === 'male-male'">
-            <v-group :config="{name:'connector'}">
-                <v-rect :config="{
-                    x: 2,
-                    y: beamLength,
-                    width: BEAMWIDTH - 4,
-                    height: 25,
-                    fill: BEAM.color,
-                    stroke: strokeConfig.stroke,
-                    strokeWidth: strokeConfig.strokeWidth,
-                }" 
-                />
-                <v-circle :config="{
-                    x: 6, 
-                    y: beamLength +12.5,
-                    radius: 2, 
-                    fill: 'white'
-                }"
-                />
-            </v-group>
-        </template>
+        <v-group 
+            v-if="type === 'male-female' || type === 'male-male'"
+            :config="{name:'connector'}">
+            <v-rect :config="{
+                x: 2,
+                y: beamLength,
+                width: BEAMWIDTH - 4,
+                height: 25,
+                fill: BEAM.color,
+                stroke: strokeConfig.stroke,
+                strokeWidth: strokeConfig.strokeWidth,
+            }" 
+            />
+            <v-circle :config="{
+                x: 6, 
+                y: beamLength +12.5,
+                radius: 2, 
+                fill: 'white'
+            }"
+            />
+        </v-group>
         <v-circle 
             :ref="`${id}_8`" 
             :id=" `${id}_8`",

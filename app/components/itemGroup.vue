@@ -2,16 +2,18 @@
 import { Stage as VStage, Layer as VLayer, Star as VStar, Group as VGroup, Rect as VRect, type VueKonvaRef } from 'vue-konva';
 
 const recoverPosition = (part: Group) => {
+    const stagePos = part.getStage()?.getAbsolutePosition() ?? { x: 0, y: 0 }
     part.setAbsolutePosition({
-        x: part.getAbsolutePosition().x + (groupNode.value?.getAbsolutePosition().x ?? 0),
-        y: part.getAbsolutePosition().y + (groupNode.value?.getAbsolutePosition().y ?? 0)
+        x: ((part.getAbsolutePosition().x + (groupNode.value?.getAbsolutePosition().x ?? 0))) - stagePos.x,
+        y: ((part.getAbsolutePosition().y + (groupNode.value?.getAbsolutePosition().y ?? 0))) - stagePos.y
     })
 }
 
 const setNewPartPosition = (part: Group) => {
+    const stagePos = part.getStage()?.getAbsolutePosition() ?? { x: 0, y: 0 }
     part.setAbsolutePosition({
-        x: part.getAbsolutePosition().x - (groupNode.value?.getAbsolutePosition().x ?? 0),
-        y: part.getAbsolutePosition().y - (groupNode.value?.getAbsolutePosition().y ?? 0)
+        x: part.getAbsolutePosition().x - (groupNode.value?.getAbsolutePosition().x ?? 0) + stagePos.x,
+        y: part.getAbsolutePosition().y - (groupNode.value?.getAbsolutePosition().y ?? 0) + stagePos.y
     })
 }
 

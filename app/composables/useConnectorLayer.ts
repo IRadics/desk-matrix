@@ -12,7 +12,7 @@ export const useConnectorLayer = (partGroupNode?: RefLike<Group>, rotation?: Ref
 
 
     const updateConnectorPositions = () => {
-        if(!partGroupNode) return;
+        if(!partGroupNode?.value) return;
         connectors.value.forEach((con) => {
             const offset = con.offsetPosition
 
@@ -24,7 +24,7 @@ export const useConnectorLayer = (partGroupNode?: RefLike<Group>, rotation?: Ref
     }
 
     const resetConnectorPositions = () => {
-        if(!partGroupNode) return;
+        if(!partGroupNode?.value) return;
         connectors.value.forEach((con) => {
             con.node.rotate(-(rotation?.value ?? 0))
             con.node.setAbsolutePosition({
@@ -36,7 +36,7 @@ export const useConnectorLayer = (partGroupNode?: RefLike<Group>, rotation?: Ref
 
 
     const setConnectorLayer = () => {
-        if (!partGroupNode) return;
+        if (!partGroupNode?.value) return;
 
         const connectorNodes = partGroupNode.value.find('.connector')
         connectorNodes.forEach((conNode) => {
@@ -59,7 +59,7 @@ export const useConnectorLayer = (partGroupNode?: RefLike<Group>, rotation?: Ref
     }
 
     const unSetConnectorLayer = () => {
-        if (!partGroupNode) return;
+        if (!partGroupNode?.value) return;
         connectors.value.forEach((con) => {
             con.node.moveTo(con.originalParent)
         })

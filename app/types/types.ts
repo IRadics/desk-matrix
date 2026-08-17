@@ -16,17 +16,22 @@ export type SnapPoint = {
     offsetToParent: { x: number, y: number }
 }
 
-export type Part = {
-    id: string,
+export type AddPartData = {
     partType: PartType
     length?: number
     width?: number
     height?: number
     snapType?: 'regular' | 'quad' | 'none'
     beamType?: 'male-female' | 'female-male' | 'male-male' | 'female-female'
-    group?: string | null
     initialPosition?: {x: number, y:number}
 }
+
+export type Part = {
+    id: string,
+    group?: string | null
+} & AddPartData
+
+
 
 export type SnapPointConnection = {
     partRef: PartInstance, 

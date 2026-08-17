@@ -1,64 +1,22 @@
 +
 <script lang="ts" setup>
 
-const stageSize = {
-    width: window.innerWidth,
-    height: window.innerHeight
-}
+const { width, height} = useWindowSize()
+const canvasConfig  = computed<StageConfig>(()=> ({
+    draggable: true,
+    width: width.value ,
+    height: height.value - 70
+}))
+
+
 
 import { Stage as VStage, Layer as VLayer, Star as VStar, Group as VGroup, Rect as VRect, type VueKonvaRef } from 'vue-konva';
-import {type KonvaPointerEvent} from 'konva/lib/PointerEvents'
+import {type KonvaPointerEvent, } from 'konva/lib/PointerEvents'
+import type { Stage } from 'konva/lib/Stage';
 
 const snapDistance = 40;
 
-const parts = ref<Part[]>([
-  {
-    id: crypto.randomUUID(),
-    partType: 'beam',
-    length: 7,
-    beamType: 'male-female',
-    snapType: 'regular',
-  },
-  {
-    id: crypto.randomUUID(),
-    partType: 'beam',
-    length: 7,
-    beamType: 'male-female',
-    snapType: 'quad'
-  },
-  {
-    id: crypto.randomUUID(),
-    partType: 'board',
-    height: 8,
-    width: 8,
-  },
-  {
-    id: crypto.randomUUID(),
-    partType: 'board',
-    height: 8,
-    width: 8,
-  },  {
-    id: crypto.randomUUID(),
-    partType: 'clamp',
-      initialPosition: {x:100, y:200}
-  },
-  {
-    id: crypto.randomUUID(),
-    partType: '4-way-corner',
-    snapType: 'regular',
-  },
-  {
-    id: crypto.randomUUID(),
-    partType: '3-way-corner',
-    snapType: 'regular',
-  },
-  {
-    id: crypto.randomUUID(),
-    partType: '2-way-corner',
-    snapType: 'regular',
-  }
-
-])
+const parts = ref<Part[]>([])
 
 const groups = ref<Record<string, GroupData>>({});
 
@@ -218,7 +176,7 @@ const removePartFromGroup = (id: string) => {
 }
 
 const snapPart = (basePart: PartInstance, targetPart: PartInstance, baseSnapPoint: SnapPoint, targetSnapPoint: SnapPoint ) => {
-    basePart.node.setPosition({
+    basePart.node.setAbsolutePosition({
         x: targetSnapPoint.x + baseSnapPoint.offsetToParent.x, 
         y: targetSnapPoint.y  + baseSnapPoint.offsetToParent.y
     })
@@ -367,12 +325,76 @@ watch(connectorLayer,()=>{
   }
 },{once: true})
 
+const addPart = (part: AddPartData)=>{
+  if(!part.initialPosition) {
+    console.log(canvasConfig)
+    part.initialPosition=  {
+      x: (canvasConfig.value.width ?? 0) / 2,
+      y: (canvasConfig.value.height ?? 0) / 2
+    }
+  }
+  parts.value.push({
+    ...part,
+    id: crypto.randomUUID(),
+  })
+}
+
+const stageRef = useTemplateRef<VueKonvaRef<Stage>>('stage')
+
+const handleWheel = (e: KonvaPointerEvent) => {
+  if(!stageRef.value) {
+    console.error('Stage ref not found')
+    return
+  };
+  e.evt.preventDefault();
+
+  const stage = stageRef.value?.getNode();
+  const oldScale = stage.scaleX();
+  const pointer = stage.getPointerPosition();
+
+  if(!pointer) {
+    console.error('stage.getPointerPosition is undefined')
+    return
+  };
+
+  const mousePointTo = {
+    x: (pointer.x - stage.x()) / oldScale,
+    y: (pointer.y - stage.y()) / oldScale,
+  };
+
+  // how to scale? Zoom in? Or zoom out?
+  let direction = e.evt.deltaY > 0 ? -1 : 1;
+
+  // when we zoom on trackpad, e.evt.ctrlKey is true
+  // in that case lets revert direction
+  if (e.evt.ctrlKey) {
+    direction = -direction;
+  }
+
+  const scaleBy = 1.07;
+  const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+
+  stage.scale({ x: newScale, y: newScale });
+
+  const newPos = {
+    x: pointer.x - mousePointTo.x * newScale,
+    y: pointer.y - mousePointTo.y * newScale,
+  };
+  stage.position(newPos);
+};
+
+defineExpose({
+  addPart
+});
+
 </script>
 
 <template>
+  <div>
     <v-stage 
         ref="stage" 
-        :config="stageSize"
+        :config="canvasConfig"
+         @wheel="handleWheel"
         @click="onStageClicked"
         >
         <v-layer
@@ -400,10 +422,7 @@ watch(connectorLayer,()=>{
                         :dragging-disabled="selectedPart !== part.id"
                         :selected="selectedPart === part.id || selectedItemGroup === part.group"
                         @dragging="(isDragging) =>onDragging(isDragging, part.id)"
-                        :initial-position="{
-                          x: stageSize.width / 2,
-                          y: stageSize.height / 2
-                        }"
+                        :initial-position="part.initialPosition"
                         @clicked="onPartClicked(part.id)"
                     />
                     <ItemBoard 
@@ -415,6 +434,7 @@ watch(connectorLayer,()=>{
                       :dragging-disabled="selectedPart !== part.id"
                       :selected="selectedPart === part.id || selectedItemGroup === part.group"
                       @dragging="(isDragging) =>onDragging(isDragging, part.id, true)"
+                      :initial-position="part.initialPosition"
                       @clicked="onPartClicked(part.id)"
                     />
                     <ItemClamp
@@ -442,4 +462,5 @@ watch(connectorLayer,()=>{
             </v-group>
         </v-layer>
     </v-stage>
+    </div>
 </template>

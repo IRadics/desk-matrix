@@ -10,7 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxtjs/tailwindcss": "6.14.0",
+    "@nuxt/ui": "^4.10.0",
     "@vueuse/components": "^14.4.0",
     "@vueuse/nuxt": "14.4.0",
     "konva": "^10.3.0",
