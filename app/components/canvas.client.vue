@@ -328,10 +328,8 @@ watch(connectorLayer,()=>{
 
 const addPart = (part: AddPartData)=>{
   if(!part.initialPosition) {
-    part.initialPosition=  {
-      x: (canvasConfig.value.width ?? 0) / 2,
-      y: (canvasConfig.value.height ?? 0) / 2
-    }
+    const pos = stageNode.value? screenCenterToStagePosition(stageNode.value) : {x: 300, y:300}
+    part.initialPosition= pos
   }
   parts.value.push({
     ...part,
