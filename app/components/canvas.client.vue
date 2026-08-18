@@ -340,15 +340,16 @@ const addPart = (part: AddPartData)=>{
 }
 
 const stageRef = useTemplateRef<VueKonvaRef<Stage>>('stage')
+const stageNode = computed(()=> stageRef.value?.getNode())
 
 const handleWheel = (e: KonvaPointerEvent) => {
-  if(!stageRef.value) {
+  if(!stageNode.value) {
     console.error('Stage ref not found')
     return
   };
   e.evt.preventDefault();
 
-  const stage = stageRef.value?.getNode();
+  const stage = stageNode.value;
   const oldScale = stage.scaleX();
   const pointer = stage.getPointerPosition();
 
@@ -385,7 +386,9 @@ const handleWheel = (e: KonvaPointerEvent) => {
 };
 
 defineExpose({
-  addPart
+  addPart,
+  parts,
+  stageNode
 });
 
 

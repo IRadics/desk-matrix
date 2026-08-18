@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { ContextMenuItem, DropdownMenuItem } from '@nuxt/ui'
+import { type Vector2d } from 'konva/lib/types'
 
 const canvas = useTemplateRef('canvas')
 
@@ -11,6 +12,15 @@ const snapTypesBeam: Part['snapType'][] = ['regular', 'quad']
 
 const corners : Part['partType'][] = ['2-way-corner', '3-way-corner', '4-way-corner']
 const snapTypesCorner: Part['snapType'][] = ['none', 'regular']
+
+const addPart= (part: AddPartData) =>{
+    const initialPosition = part.partType === 'board' ? boardModalClickPos.value  : contextMenuClickPos.value
+    if(!canvas.value) return;
+    canvas.value.addPart({
+        ...part,
+        ...(initialPosition ? {initialPosition: initialPosition} : {} )
+    })
+}
 
 
 const beamDropdownItems = ref<DropdownMenuItem[][]>([[]])
@@ -36,7 +46,7 @@ connectors.forEach(con =>{
                 ...(snap === 'quad' ?
                 quadSizes.map((l)=>({
                     label: `${l}x`,
-                    onClick: () => canvas.value?.addPart({
+                    onClick: () => addPart({
                         partType: 'beam',
                         length: l,
                         snapType: snap,
@@ -45,7 +55,7 @@ connectors.forEach(con =>{
                 })):
                 regularSizes.map((l)=>({
                     label: `${l}x`,
-                    onClick: () => canvas.value?.addPart({
+                    onClick: () => addPart({
                         partType: 'beam',
                         length: l,
                         snapType: snap,
@@ -72,7 +82,7 @@ corners.forEach(con =>{
             },
         ...snapTypesCorner.map((snap)=>({
             label: snap,
-            onClick: ()=> canvas.value?.addPart({
+            onClick: ()=> addPart({
                 partType: con,
                 snapType: snap,
             })
@@ -80,30 +90,52 @@ corners.forEach(con =>{
     }))
 })
 
-const items = ref<ContextMenuItem[][]>([
+
+const boardDialogOpen = ref<boolean>(false)
+const items = ref<ContextMenuItem[]>([
     [
         {
             label: 'Add part',
             children: [
                 {
                     label: 'Beam',
+                    children: beamDropdownItems
                 },
                 {
                     label: 'Corner',
+                    children: cornerDropdownItems
                 },
                 {
                     label: 'Clamp',
+                    onClick: ()=>addPart({
+                        partType: 'clamp'
+                    })
+                },
+                {
+                    label: 'Board',
+                    onClick: () => {
+                        boardDialogOpen.value = true;
+                        boardModalClickPos.value = contextMenuClickPos.value 
+                    }
                 }
             ]
         }
     ],
 ])
 
-
+const contextMenuClickPos = ref<Vector2d | null>(null)
+const boardModalClickPos = ref<Vector2d | null>(null)
+const onContextMenuOpen = (open: boolean) => {
+    if (!open) {
+        contextMenuClickPos.value = null;
+        return;
+    }
+    contextMenuClickPos.value = canvas.value?.stageNode?.getRelativePointerPosition() ?? null
+}
 
 </script>
 <template>
-    <div class=" bg-gray-800 ">
+    <div class=" bg-gray-800">
         <UHeader 
         :ui="{
             container: 'max-w-none!',
@@ -131,7 +163,7 @@ const items = ref<ContextMenuItem[][]>([
                     size="xl"
                     variant="outline"
                     leading-icon="i-lucide-plus" 
-                    @click="canvas?.addPart({
+                    @click="addPart({
                     partType:'clamp'
                 })">Clamp</UButton>
                 <UDropdownMenu>
@@ -141,7 +173,7 @@ const items = ref<ContextMenuItem[][]>([
                     leading-icon="i-lucide-plus" > Board</UButton>
                     <template #content-bottom>
                         <BoardSelector @selected="(size)=>{
-                            canvas?.addPart({
+                            addPart({
                                 partType: 'board',
                                 height: size.y,
                                 width: size.x
@@ -151,8 +183,21 @@ const items = ref<ContextMenuItem[][]>([
                 </UDropdownMenu>
             </template>
         </UHeader>
-        <UContextMenu :items="items">
+        <UContextMenu :items="items" @update:open="onContextMenuOpen">
             <Canvas ref="canvas" />
         </UContextMenu>
+        <UModal v-model:open="boardDialogOpen" class="w-fit">
+            <template #content>
+                <BoardSelector 
+                    @selected="(size)=>{
+                            addPart({
+                                partType: 'board',
+                                height: size.y,
+                                width: size.x,
+                            });
+                            boardDialogOpen = false
+                        }"/>
+            </template>
+        </UModal>
     </div>
 </template>y
