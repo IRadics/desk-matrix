@@ -5,14 +5,15 @@ const { width, height} = useWindowSize()
 const canvasConfig  = computed<StageConfig>(()=> ({
     draggable: true,
     width: width.value ,
-    height: height.value - 70
+    height: height.value - 70,
 }))
 
 
 
-import { Stage as VStage, Layer as VLayer, Star as VStar, Group as VGroup, Rect as VRect, type VueKonvaRef } from 'vue-konva';
+import { Stage as VStage, Layer as VLayer, Group as VGroup, type VueKonvaRef, Shape as VShape } from 'vue-konva';
 import {type KonvaPointerEvent, } from 'konva/lib/PointerEvents'
 import type { Stage } from 'konva/lib/Stage';
+import type Konva from 'konva';
 
 const snapDistance = 40;
 
@@ -327,7 +328,6 @@ watch(connectorLayer,()=>{
 
 const addPart = (part: AddPartData)=>{
   if(!part.initialPosition) {
-    console.log(canvasConfig)
     part.initialPosition=  {
       x: (canvasConfig.value.width ?? 0) / 2,
       y: (canvasConfig.value.height ?? 0) / 2
@@ -372,7 +372,8 @@ const handleWheel = (e: KonvaPointerEvent) => {
   }
 
   const scaleBy = 1.07;
-  const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+  const _newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+  const newScale = Math.min(Math.max(_newScale, 0.5), 2.5);
 
   stage.scale({ x: newScale, y: newScale });
 
@@ -387,16 +388,42 @@ defineExpose({
   addPart
 });
 
+
+
+const mouseOverPart = ref<string | null>(null);
+const onMouseEnter = (partId: string) => {
+  mouseOverPart.value = partId
+}
+
+const onMouseLeave = (partId: string) => {
+  if (mouseOverPart.value === partId) {
+    mouseOverPart.value = null
+  }
+}
+
+const mouseCursor = computed(() => {
+  if (mouseOverPart.value && mouseOverPart.value === selectedPart.value) {
+    return 'grab'
+  }
+  if (selectedItemGroup.value && groups.value[selectedItemGroup.value]?.find((p) => p.part.id === mouseOverPart.value)) {
+    return 'grab'
+  }
+  return 'default'
+})
+
 </script>
 
 <template>
-  <div>
+  <div :style="{
+    cursor: mouseCursor
+  }">
     <v-stage 
         ref="stage" 
         :config="canvasConfig"
          @wheel="handleWheel"
         @click="onStageClicked"
         >
+        <GridLayer/>
         <v-layer
           id="connectorLayer"
           ref="connectorLayer"
@@ -424,6 +451,8 @@ defineExpose({
                         @dragging="(isDragging) =>onDragging(isDragging, part.id)"
                         :initial-position="part.initialPosition"
                         @clicked="onPartClicked(part.id)"
+                        @mouseenter="onMouseEnter(part.id)"
+                        @mouseleave="onMouseLeave(part.id)"
                     />
                     <ItemBoard 
                       v-if="part.partType === 'board'"
@@ -436,6 +465,8 @@ defineExpose({
                       @dragging="(isDragging) =>onDragging(isDragging, part.id, true)"
                       :initial-position="part.initialPosition"
                       @clicked="onPartClicked(part.id)"
+                      @mouseenter="onMouseEnter(part.id)"
+                      @mouseleave="onMouseLeave(part.id)"
                     />
                     <ItemClamp
                       v-if="part.partType === 'clamp'"
@@ -445,7 +476,10 @@ defineExpose({
                       :dragging-disabled="selectedPart !== part.id"
                       :selected="selectedPart === part.id || selectedItemGroup === part.group"
                       @dragging="(isDragging) =>onDragging(isDragging, part.id)"
-                      @clicked="onPartClicked(part.id)"/>
+                      @clicked="onPartClicked(part.id)"
+                      @mouseenter="onMouseEnter(part.id)"
+                      @mouseleave="onMouseLeave(part.id)"
+                      />
                     <ItemCorner
                       v-if="(part.partType === '4-way-corner' || part.partType === '3-way-corner' || part.partType === '2-way-corner') && part.snapType !== 'quad'"
                       ref="partRef"
@@ -457,6 +491,8 @@ defineExpose({
                       :selected="selectedPart === part.id || selectedItemGroup === part.group"
                       @dragging="(isDragging) =>onDragging(isDragging, part.id)"
                       @clicked="onPartClicked(part.id)"
+                      @mouseenter="onMouseEnter(part.id)"
+                      @mouseleave="onMouseLeave(part.id)"
                     />
                 </template>
             </v-group>
