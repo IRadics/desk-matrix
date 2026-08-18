@@ -3,6 +3,7 @@ import type { ContextMenuItem, DropdownMenuItem } from '@nuxt/ui'
 import { type Vector2d } from 'konva/lib/types'
 
 const canvas = useTemplateRef('canvas')
+const toast = useToast()
 
 const regularSizes = [3, 4, 5, 6, 7, 8, 9, 10, 11]
 const quadSizes = [3, 5, 7, 9, 11]
@@ -13,12 +14,12 @@ const snapTypesBeam: Part['snapType'][] = ['regular', 'quad']
 const corners : Part['partType'][] = ['2-way-corner', '3-way-corner', '4-way-corner']
 const snapTypesCorner: Part['snapType'][] = ['none', 'regular']
 
-const addPart= (part: AddPartData) =>{
-    const initialPosition = part.partType === 'board' ? boardModalClickPos.value  : contextMenuClickPos.value
+const addPart= (part: AddPartData, position?: Vector2d) =>{
+    const initialPosition = position ?? (part.partType === 'board' ? boardModalClickPos.value  : contextMenuClickPos.value)
     if(!canvas.value) return;
     canvas.value.addPart({
         ...part,
-        ...(initialPosition ? {initialPosition: initialPosition} : {} )
+        ...(initialPosition ? {initialPosition: initialPosition} : {} ),
     })
 }
 
@@ -89,21 +90,64 @@ corners.forEach(con =>{
         }))]
     }))
 })
-
-
 const boardDialogOpen = ref<boolean>(false)
-const items = ref<ContextMenuItem[]>([
+const copiedPartData = ref<Part | null>(null)
+const selectedPartData = computed<Part>((): Part=>{
+    return canvas.value?.selectedPartData as Part
+})
+const copySelectedPart = () =>{
+    if(selectedPartData.value) {
+        copiedPartData.value = selectedPartData.value
+        toast.add({
+            title: 'Part copied',
+            duration: 1000,
+            progress: false
+        })
+    }
+    
+}
+const pastePart = () =>{
+    if(copiedPartData.value) {
+        const rotation = canvas.value?.selectedPartState.rotation ?? 0
+        addPart(
+            {
+                ...copiedPartData.value,
+                initialRotation: rotation
+            }, 
+            canvas.value?.stageNode?.getRelativePointerPosition() ?? undefined
+        )
+        toast.add({
+            title: 'Part pasted',
+            duration: 1000,
+            progress: false
+        })
+    }
+}
+
+onKeyStroke(['c', 'meta'],(e)=>{
+    e.preventDefault()
+    copySelectedPart()
+},{
+    dedupe: true
+})
+onKeyStroke(['v', 'meta'],(e)=>{
+    e.preventDefault()
+    pastePart()
+},{
+    dedupe: true
+})
+const items = computed<ContextMenuItem[][]>(() => [
     [
         {
             label: 'Add part',
             children: [
                 {
                     label: 'Beam',
-                    children: beamDropdownItems
+                    children: beamDropdownItems.value
                 },
                 {
                     label: 'Corner',
-                    children: cornerDropdownItems
+                    children: cornerDropdownItems.value
                 },
                 {
                     label: 'Clamp',
@@ -119,6 +163,17 @@ const items = ref<ContextMenuItem[]>([
                     }
                 }
             ]
+        },
+        ...(selectedPartData.value ?[ {
+            label: 'Copy',
+            kbds: ['meta', 'c'],
+            onClick: ()=> copySelectedPart()
+        }] : []),
+        {
+            disabled: !copiedPartData.value,
+            label: 'Paste',
+            kbds: ['meta', 'v'],
+            onClick: ()=> pastePart()
         }
     ],
 ])
@@ -141,7 +196,7 @@ const onContextMenuOpen = (open: boolean) => {
             container: 'max-w-none!',
             center: 'flex gap-2'
         }">
-            <template #title>MultiBoard DMF</template>
+            <template #title>MultiBoard DMF planner</template>
             <template #default>
                 <UDropdownMenu :items="beamDropdownItems">
                     <UButton 

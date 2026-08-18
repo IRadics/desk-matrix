@@ -119,6 +119,14 @@ const searchConnection = useThrottleFn((basePartId: string ,excludeBoard?: boole
 
 const selectedItemGroup = ref<string | null>(null)
 const selectedPart = ref<string | null>(null)
+const selectedPartData = computed(()=>{
+  return parts.value.find((part)=> part.id === selectedPart.value) ?? null
+})
+const selectedPartState = computed(()=>{
+  return {
+    rotation: partRefs.value?.find((ref)=>ref.id === selectedPart.value)?.rotation ?? 0
+  }
+})
 
 const onPartClicked = (partId: string) => {
 
@@ -153,7 +161,10 @@ const movePartToTop = async (partId: string) =>{
 const removePartFromGroup = (id: string) => {
 
   const partData = parts.value.find(p => p.id === id)
-  if (!partData) return;
+  if (!partData) {
+    console.error('removePartFromGroup - partData not found')
+    return;
+  };
 
   const groupName = partData.group
   partData.group = undefined
@@ -176,25 +187,20 @@ const removePartFromGroup = (id: string) => {
 
 }
 
-const snapPart = (basePart: PartInstance, targetPart: PartInstance, baseSnapPoint: SnapPoint, targetSnapPoint: SnapPoint ) => {
-    basePart.node.setAbsolutePosition({
-        x: targetSnapPoint.x + baseSnapPoint.offsetToParent.x, 
-        y: targetSnapPoint.y  + baseSnapPoint.offsetToParent.y
-    })
-    basePart.highlightSnapPoint(null)
-    targetPart.highlightSnapPoint(null)
+const snapPart = (basePart: PartInstance, targetPart: PartInstance, baseSnapPoint: SnapPoint, targetSnapPoint: SnapPoint) => {
+  basePart.node.setAbsolutePosition({
+    x: targetSnapPoint.x + baseSnapPoint.offsetToParent.x,
+    y: targetSnapPoint.y + baseSnapPoint.offsetToParent.y
+  })
+  basePart.highlightSnapPoint(null)
+  targetPart.highlightSnapPoint(null)
 }
-        const groupRef = useTemplateRef<VueKonvaRef<Group>>('groupRef')
-const onGroupDragging =(isDragging: boolean, group: GroupData) => {
+const groupRef = useTemplateRef<VueKonvaRef<Group>>('groupRef')
 
-  if(isDragging && selectedPart.value && !selectedItemGroup.value && group.some(p => p.part.id === selectedPart.value)) {
-      const partData = parts.value.find(p => p.id === selectedPart.value)
-      if(!partData) {
-        console.error('onGroupDragging: Part data not found')
-          return
-      }
-      removePartFromGroup(selectedPart.value)
-  } 
+const onGroupDragging = (isDragging: boolean, group: GroupData) => {
+  if (isDragging && selectedPart.value && !selectedItemGroup.value && group.some(p => p.part.id === selectedPart.value)) {
+    removePartFromGroup(selectedPart.value)
+  }
 }
 
 const onDragging = (isDragging: boolean, partId: string, disableHighlightSearch?: boolean) => {
@@ -287,7 +293,7 @@ const moveBoardsToTop = async() => {
 onKeyStroke
   ('r', (e) => {
     if (selectedPart.value) {
-      const isInGroup = !!parts.value.find((p)=> p.id === selectedPart.value)?.group
+      const isInGroup = !!selectedPartData.value?.group
       if(isInGroup) return;
       const part = partRefs.value?.find(part => part.id === selectedPart.value)
       if (part && part.rotate) {
@@ -326,15 +332,22 @@ watch(connectorLayer,()=>{
   }
 },{once: true})
 
-const addPart = (part: AddPartData)=>{
+const addPart = (part: AddPartData | Part)=>{
   if(!part.initialPosition) {
     const pos = stageNode.value? screenCenterToStagePosition(stageNode.value) : {x: 300, y:300}
     part.initialPosition= pos
   }
-  parts.value.push({
+
+  const newPart = {
     ...part,
-    id: crypto.randomUUID(),
-  })
+    id: crypto.randomUUID()
+  }
+
+  if ('group' in newPart) {
+    delete newPart.group
+  }
+
+  parts.value.push(newPart)
 }
 
 const stageRef = useTemplateRef<VueKonvaRef<Stage>>('stage')
@@ -386,10 +399,10 @@ const handleWheel = (e: KonvaPointerEvent) => {
 defineExpose({
   addPart,
   parts,
-  stageNode
+  stageNode,
+  selectedPartData,
+  selectedPartState
 });
-
-
 
 const mouseOverPart = ref<string | null>(null);
 const onMouseEnter = (partId: string) => {
@@ -449,8 +462,9 @@ const mouseCursor = computed(() => {
                         :snap-type="part.snapType ?? 'regular'"
                         :dragging-disabled="selectedPart !== part.id"
                         :selected="selectedPart === part.id || selectedItemGroup === part.group"
-                        @dragging="(isDragging) =>onDragging(isDragging, part.id)"
                         :initial-position="part.initialPosition"
+                        :initial-rotation="part.initialRotation ?? 0"
+                        @dragging="(isDragging) =>onDragging(isDragging, part.id)"
                         @clicked="onPartClicked(part.id)"
                         @mouseenter="onMouseEnter(part.id)"
                         @mouseleave="onMouseLeave(part.id)"
@@ -463,8 +477,8 @@ const mouseCursor = computed(() => {
                       :width="part.width ?? 8"
                       :dragging-disabled="selectedPart !== part.id"
                       :selected="selectedPart === part.id || selectedItemGroup === part.group"
-                      @dragging="(isDragging) =>onDragging(isDragging, part.id, true)"
                       :initial-position="part.initialPosition"
+                      @dragging="(isDragging) =>onDragging(isDragging, part.id, true)"
                       @clicked="onPartClicked(part.id)"
                       @mouseenter="onMouseEnter(part.id)"
                       @mouseleave="onMouseLeave(part.id)"
@@ -488,6 +502,7 @@ const mouseCursor = computed(() => {
                       :type="part.partType",
                       :snap-type="part.snapType"
                       :initial-position="part.initialPosition"
+                      :initial-rotation="part.initialRotation ?? 0"
                       :dragging-disabled="selectedPart !== part.id"
                       :selected="selectedPart === part.id || selectedItemGroup === part.group"
                       @dragging="(isDragging) =>onDragging(isDragging, part.id)"

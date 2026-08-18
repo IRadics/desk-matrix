@@ -24,6 +24,7 @@ export type AddPartData = {
     snapType?: 'regular' | 'quad' | 'none'
     beamType?: 'male-female' | 'female-male' | 'male-male' | 'female-female'
     initialPosition?: {x: number, y:number}
+    initialRotation?: 0 | 90 | 180 | 270
 }
 
 export type Part = {
@@ -45,6 +46,7 @@ export type ExposePartInstance = {
     isDragging: RefLike<boolean>,
     node: RefLike<Group>
     rotate?: () => void
+    rotation?: RefLike<number>
     partType: PartType
     setConnectorLayer?: () => void
     unSetConnectorLayer?: () => void

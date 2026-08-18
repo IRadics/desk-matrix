@@ -186,7 +186,8 @@ defineExpose<ExposePartInstance>({
     partType: 'beam',
     setConnectorLayer,
     unSetConnectorLayer,
-    updateConnectorPositions
+    updateConnectorPositions,
+    rotation
 })
 
 

@@ -69,7 +69,7 @@ const getSnapPoints = (): SnapPoint[] => {
 
 const isDragging = ref(false)
 
-const rotation = ref(0)
+const rotation = ref<number>(props.initialRotation ?? 0)
 const rotate = () => {
     rotation.value = (rotation.value + 90) % 360
 }
@@ -165,6 +165,7 @@ defineExpose<ExposePartInstance>({
     setConnectorLayer,
     unSetConnectorLayer,
     updateConnectorPositions,
+    rotation
 })
 </script>
 <template>
