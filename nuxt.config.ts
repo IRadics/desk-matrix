@@ -4,6 +4,18 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@vueuse/nuxt', '@nuxt/ui'],
   css: ['~/assets/css/main.css'],
+  icon: {
+    mode: 'svg',
+    customCollections: [{
+      prefix: 'custom',
+      dir: './app/assets/icons',
+
+    }],
+    clientBundle: {
+      scan: true,
+      includeCustomCollections: true
+    }
+  },
   imports: {
     dirs: [
       // Scans all files directly under app/types
@@ -12,10 +24,8 @@ export default defineNuxtConfig({
       'types/**',
       'types/**/*.d.ts'
     ],
-
-    
   },
-   build: {
+  build: {
     transpile: ['konva']
   }
 })

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="803.5 349 75.5 111">
+    <path
+        d="M838 390h10.5v29H838zm-29-10.5h29V390h-29zm0 39.5h29v10.5h-29zm0-29h29v29h-29zm39.5 2h25v25h-25z"
+        fill="var(--beam-color)" stroke="var(--stroke-color)" paint-order="fill stroke markers" stroke-miterlimit="10"></path>
+    <path fill="#fff" paint-order="stroke fill markers" d="M863 398a2 2 0 1 1 0-.002Z"></path>
+    <path fill="var(--beam-color)" stroke="var(--stroke-color)" paint-order="fill stroke markers" d="M811 354.5h25v25h-25z"
+        stroke-miterlimit="10"></path>
+    <path fill="#fff" paint-order="stroke fill markers" d="M819 367a2 2 0 1 1 0-.002Z"></path>
+    <path fill="var(--beam-color)" stroke="var(--stroke-color)" paint-order="fill stroke markers" d="M811 429.5h25v25h-25z"
+        stroke-miterlimit="10"></path>
+    <path fill="#fff" paint-order="stroke fill markers" d="M819 442a2 2 0 1 1 0-.002Z"></path>
+    <path fill="var(--snap-color)" paint-order="stroke fill markers"
+        d="m827.71 394.337 5.953 5.953v8.42l-5.953 5.953h-8.42l-5.953-5.953v-8.42l5.953-5.953Z"></path>
+</svg>

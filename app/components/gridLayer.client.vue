@@ -2,6 +2,13 @@
 import type Konva from 'konva';
 import {Layer as VLayer, Shape as VShape} from 'vue-konva'
 
+defineProps({
+  visible: {
+    type: Boolean,
+    default: true
+  }
+})
+
 const GRID_SIZE = 25;
 const GRID_EXTENT = 5000;
 
@@ -35,7 +42,11 @@ function drawGrid(
 }
 </script>
 <template>
-  <v-layer :listening="false">
+  <v-layer 
+    :listening="false" 
+    :config="({
+    visible: visible
+  } as LayerConfig)">
       <v-shape
         :config="{
           sceneFunc: drawGrid,

@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-:root{
-    --ui-header-height:70px
+:root {
+  --ui-header-height: 70px;
+  --stroke-color: black;
+  --beam-color: rgb(50, 131, 131);
+  --board-color: rgb(130, 131, 131);
+  --clamp-color: rgb(50, 131, 131);
+  --clamp-color-dark: rgb(38, 101, 101);
+  --snap-color: rgb(207, 196, 196);
 }

@@ -5,6 +5,10 @@ import { type Vector2d } from 'konva/lib/types'
 const canvas = useTemplateRef('canvas')
 const toast = useToast()
 
+const parts = computed<Part[]>((): Part[] => {
+    return canvas.value?.parts ?? []
+})
+
 const regularSizes = [3, 4, 5, 6, 7, 8, 9, 10, 11]
 const quadSizes = [3, 5, 7, 9, 11]
 
@@ -32,6 +36,7 @@ beamDropdownItems.value[0]?.push(({
 connectors.forEach(con =>{
      beamDropdownItems.value[0]?.push(({
         label: con,
+        icon: `i-custom-beam-${con}-regular`,
         children: [
             {
                 label: 'Snap type',
@@ -39,6 +44,7 @@ connectors.forEach(con =>{
             } , 
         ...snapTypesBeam.map((snap)=>({
             label: snap,
+            icon: `i-custom-beam-${con}-${snap}`,
             children: [
                 {
                     label: 'Length',
@@ -71,18 +77,20 @@ connectors.forEach(con =>{
 const cornerDropdownItems = ref<DropdownMenuItem[][]>([[]])
 cornerDropdownItems.value[0]?.push(({
     label: 'Type',
-    type: 'label'
+    type: 'label',
 }))
 corners.forEach(con =>{
     cornerDropdownItems.value[0]?.push(({
         label: con,
+        icon: `i-custom-${con}-none`,
         children: [
             {
                 label: 'Snap type',
-                type: 'label'
+                type: 'label',
             },
         ...snapTypesCorner.map((snap)=>({
             label: snap,
+            icon: `i-custom-${con}-${snap}`,
             onClick: ()=> addPart({
                 partType: con,
                 snapType: snap,
@@ -143,20 +151,24 @@ const items = computed<ContextMenuItem[][]>(() => [
             children: [
                 {
                     label: 'Beam',
-                    children: beamDropdownItems.value
+                    children: beamDropdownItems.value,
+                    icon: 'i-custom-beam-female-male-regular'
                 },
                 {
                     label: 'Corner',
-                    children: cornerDropdownItems.value
+                    children: cornerDropdownItems.value,
+                    icon: 'i-custom-2-way-corner-none'
                 },
                 {
                     label: 'Clamp',
+                    icon: 'i-custom-clamp',
                     onClick: ()=>addPart({
                         partType: 'clamp'
                     })
                 },
                 {
                     label: 'Board',
+                    icon: 'i-custom-board',
                     onClick: () => {
                         boardDialogOpen.value = true;
                         boardModalClickPos.value = contextMenuClickPos.value 
@@ -188,9 +200,14 @@ const onContextMenuOpen = (open: boolean) => {
     contextMenuClickPos.value = canvas.value?.stageNode?.getRelativePointerPosition() ?? null
 }
 
+const menuUiConfig = {
+    item: 'flex items-center',
+    itemLeadingIcon: 'h-12 w-12'
+}
 </script>
 <template>
     <div class=" bg-gray-800">
+        <SideBar :parts="parts"/>
         <UHeader 
         :ui="{
             container: 'max-w-none!',
@@ -198,20 +215,33 @@ const onContextMenuOpen = (open: boolean) => {
         }">
             <template #title>MultiBoard DMF planner</template>
             <template #default>
-                <UDropdownMenu :items="beamDropdownItems">
+                <UDropdownMenu :items="beamDropdownItems" :ui="menuUiConfig" size="xl" >
                     <UButton 
                         size="xl"
-                        leading-icon="i-lucide-plus" 
                         trailing-icon="i-lucide-chevron-down"  
-                        variant="outline">Beam</UButton>
+                        variant="outline">
+                        <template #leading>
+                            <div class="aspect-square w-8 flex justify-center items-center">
+                                 <UIcon name="i-custom-beam-female-male-regular" :size="32"/>
+                            </div>
+                        </template>
+                        <template #default>Beam</template>
+                    </UButton>
                 </UDropdownMenu>
-                <UDropdownMenu :items="cornerDropdownItems">
+                <UDropdownMenu :items="cornerDropdownItems" :ui="menuUiConfig" size="xl" >
                     <UButton 
                         size="xl"
-                        leading-icon="i-lucide-plus" 
                         trailing-icon="i-lucide-chevron-down" 
                         variant="outline"
-                        >Corner
+                        >
+                        <template #leading>
+                            <div class="aspect-square w-8 flex justify-center items-center">
+                                 <UIcon name="i-custom-2-way-corner-none" :size="32"/>
+                            </div>
+                        </template>   
+                        <template #default>
+                            Corner
+                        </template>
                     </UButton>
                 </UDropdownMenu>
                 <UButton 
@@ -220,12 +250,30 @@ const onContextMenuOpen = (open: boolean) => {
                     leading-icon="i-lucide-plus" 
                     @click="addPart({
                     partType:'clamp'
-                })">Clamp</UButton>
+                })">
+                    <template #leading>
+                        <div class="aspect-square w-8 flex justify-center items-center">
+                            <UIcon name="i-custom-clamp" :size="32"/>
+                        </div>
+                    </template>   
+                    <template #default>
+                        Clamp
+                    </template>
+                </UButton>
                 <UDropdownMenu>
                     <UButton
                     size="xl"
                     variant="outline"
-                    leading-icon="i-lucide-plus" > Board</UButton>
+                    leading-icon="i-lucide-plus" >
+                    <template #leading>
+                        <div class="aspect-square w-8 flex justify-center items-center">
+                            <UIcon name="i-custom-board" :size="32"/>
+                        </div>
+                    </template>   
+                    <template #default>
+                        Board
+                    </template>
+                </UButton>
                     <template #content-bottom>
                         <BoardSelector @selected="(size)=>{
                             addPart({
@@ -238,7 +286,12 @@ const onContextMenuOpen = (open: boolean) => {
                 </UDropdownMenu>
             </template>
         </UHeader>
-        <UContextMenu :items="items" @update:open="onContextMenuOpen">
+        <UContextMenu 
+            :items="items"  
+            size="xl" 
+            :ui="menuUiConfig"
+            @update:open="onContextMenuOpen"
+        >
             <Canvas ref="canvas" />
         </UContextMenu>
         <UModal v-model:open="boardDialogOpen" class="w-fit">
