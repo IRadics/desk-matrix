@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import type { ContextMenuItem, DropdownMenuItem } from '@nuxt/ui'
 import { type Vector2d } from 'konva/lib/types'
+import { Canvas } from '#components'
 
-const canvas = useTemplateRef('canvas')
+const canvas = useTemplateRef<InstanceType<typeof Canvas>>('canvas')
 const toast = useToast()
 
 const parts = computed<Part[]>((): Part[] => {
@@ -176,6 +177,11 @@ const items = computed<ContextMenuItem[][]>(() => [
                 }
             ]
         },
+        ...(canvas.value?.canRotateSelectedPart ?[ {
+            label: 'Rotate',
+            kbds: ['r'],
+            onClick: ()=> canvas.value?.rotateSelectedPart()
+        }] : []),
         ...(selectedPartData.value ?[ {
             label: 'Copy',
             kbds: ['meta', 'c'],
