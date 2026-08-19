@@ -51,6 +51,7 @@ const items = computed<AccordionItem[]>(()=>[
                 inner: 'bg-elevated/25 bg-gray-700',
                 body: 'py-0 px-0',
                 gap: 'h-[calc(100%-var(--ui-header-height))]',
+                header: 'border-gray-300'
             }"
         >   
             <template #header="{close, open}">
@@ -61,7 +62,8 @@ const items = computed<AccordionItem[]>(()=>[
                 </div>
             </template>
             <template v-if="sideBarOpen" >
-                <UAccordion :items="items" type="multiple" :ui="{
+                <UAccordion :items="items" type="multiple"  :ui="{
+                    item: 'border-gray-300',
                     header: 'px-2'
                 }">
                     <template #default="{item}">
@@ -77,7 +79,7 @@ const items = computed<AccordionItem[]>(()=>[
 
                     </template>
                     <template #dmf-parts>
-                        <div class="divide-y">
+                        <div class="divide-y divide-default">
                             <template v-if="partsGroupedDmf.length">
                                 <SideBarPart v-for="groupedParts in partsGroupedDmf" :parts="groupedParts"/>
                             </template>
@@ -89,7 +91,7 @@ const items = computed<AccordionItem[]>(()=>[
                         </div>
                     </template>
                     <template #multiboard-parts>
-                        <div class="divide-y">
+                        <div class="divide-y divide-default">
                             <template  v-if="partsGroupedMb.length">
                                 <SideBarPart v-for="groupedParts in partsGroupedMb" :parts="groupedParts"/>
                             </template>
