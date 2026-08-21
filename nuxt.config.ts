@@ -16,6 +16,9 @@ export default defineNuxtConfig({
       includeCustomCollections: true
     }
   },
+  colorMode: {
+    preference: 'dark'
+  },
   imports: {
     dirs: [
       // Scans all files directly under app/types

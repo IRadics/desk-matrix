@@ -17,8 +17,26 @@ const partsGroupedMb = computed(()=>{
     return groupParts(props.parts,['board'])
 })
 
+const additionalParts = computed(()=>{
+    return getAdditionalparts(props.parts)
+})
+
+
+
 const partsGroupedDmfCount =  computed(()=>partsGroupedDmf.value.flatMap((v)=>v).length)
 const partsGroupedMbCount =  computed(()=>partsGroupedMb.value.flatMap((v)=>v).length)
+const boltCount = computed(()=> additionalParts.value.bolts.reduce(
+    (acc, value)=>{
+        return acc + value.quantity
+    },
+    0
+))
+const otherCount = computed(()=> additionalParts.value.other.reduce(
+    (acc, value)=>{
+        return acc + value.quantity
+    },
+    0
+))
 
 const items = computed<AccordionItem[]>(()=>[
     {
@@ -36,6 +54,14 @@ const items = computed<AccordionItem[]>(()=>[
     {
         label: 'Bolts',
         icon: 'i-lucide-bolt',
+        slot: 'bolts',
+        itemCount: boltCount.value
+    },
+    {
+        label: 'Additional',
+        icon: 'i-lucide-plus',
+        slot: 'other',
+        itemCount: otherCount.value
     },
 ])
 
@@ -45,16 +71,26 @@ const items = computed<AccordionItem[]>(()=>[
         <USidebar 
             v-model:open="sideBarOpen" 
             collapsible="icon" 
-            close
+
+            :style="{ '--sidebar-width': '320px' }"
             :ui="{
-                container: 'absolute top-(--ui-header-height) bottom-0 h-[calc(100%-var(--ui-header-height))]',
-                inner: 'bg-elevated/25 bg-gray-700',
+                root: 'block!',
+                container: 'absolute top-(--ui-header-height) bottom-0 h-[calc(100%-var(--ui-header-height))] block!',
+                inner: 'bg-elevated/25 bg-neutral-800',
                 body: 'py-0 px-0',
                 gap: 'h-[calc(100%-var(--ui-header-height))]',
                 header: 'border-gray-300'
             }"
         >   
+
             <template #header="{close, open}">
+                <div class="absolute right-0 top-0 translate-x-full flex justify-center transition-all bg-black/20"
+                    :class="{
+                        'w-[calc(100dvw-(var(--sidebar-width-icon)))]': !sideBarOpen,
+                        'w-[calc(100dvw-(var(--sidebar-width)))]': sideBarOpen
+                    }">
+                    <span class="text-sm">Unofficial community tool. Not affiliated with Multiboard LTD.</span>
+                </div>
                 <div class="flex w-full">
                     <div v-if="open" class="text-lg font-bold  w-full">Bill of Materials</div>
                     <UButton v-if="open" icon="i-lucide-chevron-left" @click="close"></UButton>
@@ -76,7 +112,6 @@ const items = computed<AccordionItem[]>(()=>[
                                 :label="item.itemCount"
                             />
                         </div>
-
                     </template>
                     <template #dmf-parts>
                         <div class="divide-y divide-default">
@@ -98,6 +133,31 @@ const items = computed<AccordionItem[]>(()=>[
                             <template v-else>
                                 <div class="ms-4 py-4 italic text-sm opacity-70">
                                     Add parts and they will be listed here
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    <template #bolts>
+                        <div class="italic px-2 text-sm"><strong>NOTE:</strong> the calculation assumes that male connectors are used</div>
+                        <div class="divide-y divide-default">
+                            <template  v-if="boltCount > 0">
+                                <AdditionalPart v-for="part in additionalParts.bolts" :part />
+                            </template>
+                            <template v-else>
+                                <div class="ms-4 py-4 italic text-sm opacity-70">
+                                    Add parts and needed bolts will be listed here
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    <template #other>
+                        <div class="divide-y divide-default">
+                            <template  v-if="otherCount > 0">
+                                <AdditionalPart v-for="part in additionalParts.other" :part />
+                            </template>
+                            <template v-else>
+                                <div class="ms-4 py-4 italic text-sm opacity-70">
+                                    Add parts and additional parts will be listed here
                                 </div>
                             </template>
                         </div>

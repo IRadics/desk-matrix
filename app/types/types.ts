@@ -67,3 +67,10 @@ export type ConnectorData = {
     offsetPosition: Vector2d,
     originalParent: Node
 }
+
+export type AdditionalPart = {
+    partName: string,
+    description: string,
+    quantity: number
+    url?: string
+}

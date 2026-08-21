@@ -2,11 +2,28 @@
 @import "@nuxt/ui";
 
 :root {
+  --ui-primary: var(--ui-color-primary-500);
+  --tw-ring-color: var(--ui-primary) !important;
   --ui-header-height: 70px;
   --stroke-color: black;
-  --beam-color: rgb(50, 131, 131);
+  --beam-color: var(--ui-color-primary-700);
   --board-color: rgb(130, 131, 131);
-  --clamp-color: rgb(50, 131, 131);
-  --clamp-color-dark: rgb(38, 101, 101);
+  --clamp-color: var(--ui-color-primary-700);
+  --clamp-color-dark: var(--ui-color-primary-800);
   --snap-color: rgb(207, 196, 196);
+}
+
+@theme static {
+--tw-ring-color: var(--ui-primary) !important;
+--color-brand-50: #e5faff;
+--color-brand-100: #ccf6ff;
+--color-brand-200: #99ecff;
+--color-brand-300: #66e3ff;
+--color-brand-400: #33daff;
+--color-brand-500: #00d0ff;
+--color-brand-600: #00a7cc;
+--color-brand-700: #007d99;
+--color-brand-800: #005366;
+--color-brand-900: #002a33;
+--color-brand-950: #001d24;
 }
