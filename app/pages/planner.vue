@@ -222,20 +222,17 @@ const menuUiConfig = {
 <template>
     <div class=" bg-gray-800">
         <SideBar :parts="parts"/>
-        <UHeader 
-        :ui="{
-            container: 'max-w-none!',
-            center: 'flex gap-2'
-        }">
-
-            <template #title><UIcon class=" h-[60px] "  :size="60" name="i-custom-logo" /></template>
-            <template #default>
+        <div class="flex gap-2 h-(--ui-header-height) bg-neutral-900 items-center px-2 md:px-8 justify-center">
+            <UIcon class=" h-[60px] mr-auto shrink-0 hidden md:block" :size="60" name="i-custom-logo" />
+            <UIcon class=" h-[60px] mr-auto shrink-0 block md:hidden py-2" :size="60" name="i-custom-logo-small" />
+            <div class="mx-auto flex gap-2">
                 <UDropdownMenu :items="beamDropdownItems" :ui="menuUiConfig" size="xl" >
                     <UButton 
                         size="xl"
                         trailing-icon="i-lucide-chevron-down"  
                         variant="outline"
                         style=" --tw-ring-color: var(--ui-primary)"
+                        class="gap-0 md:gap-2 px-2 md:px-3"
                         >
                         <template #leading>
                             <div class="aspect-square w-8 flex justify-center items-center">
@@ -253,6 +250,7 @@ const menuUiConfig = {
                         trailing-icon="i-lucide-chevron-down" 
                         variant="outline"
                         style=" --tw-ring-color: var(--ui-primary)"
+                        class="gap-0 md:gap-2 px-2 md:px-3"
                         >
                         <template #leading>
                             <div class="aspect-square w-8 flex justify-center items-center">
@@ -269,6 +267,7 @@ const menuUiConfig = {
                     variant="outline"
                     leading-icon="i-lucide-plus" 
                     style=" --tw-ring-color: var(--ui-primary)"
+                    class="gap-0 md:gap-2 px-2 md:px-3"
                     @click="addPart({
                     partType:'clamp'
                     
@@ -287,6 +286,7 @@ const menuUiConfig = {
                     size="xl"
                     variant="outline"
                     leading-icon="i-lucide-plus" 
+                    class="gap-0 md:gap-2 px-2 md:px-3"
                     style=" --tw-ring-color: var(--ui-primary)">
                     
                     <template #leading>
@@ -308,8 +308,8 @@ const menuUiConfig = {
                         }"/>
                     </template>
                 </UDropdownMenu>
-            </template>
-        </UHeader>
+            </div>
+        </div>
         <UContextMenu 
             :items="items"  
             size="xl" 
