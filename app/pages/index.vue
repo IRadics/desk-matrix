@@ -3,9 +3,9 @@
 useSeoMeta({
     title: 'DeskMatrix',
     ogTitle: 'DeskMatrix',
-    description: 'Desk mounted solution for MultiBoard',
-    ogDescription: 'Desk mounted solution for MultiBoard',
-    ogImage: '/thumbnail.png'
+    description: 'A multi piece desk mounted solution for MultiBoard, which provides a stable structure, minimized flexing and modularity',
+    ogDescription: 'A multi piece desk mounted solution for MultiBoard, which provides a stable structure, minimized flexing and modularity',
+    ogImage: '/thumbnail.png',
 })
 
 const supportModalOpen = ref<boolean>(false)
@@ -23,11 +23,11 @@ const licenseModalOpen = ref<boolean>(false)
         title="Desk Mounted Framework for MultiBoard"
         >
         <template #description>
-            <div class="flex flex-col gap-10">
+            <div class="flex flex-col gap-6">
                 <div class="flex flex-col gap-1">
-                    <span>A multi piece desk mounted solution for MultiBoard, which provides a stable structure for the desk mount to minimize flexing.</span>
+                    <span>A multi piece desk mounted solution for MultiBoard, which provides a stable structure, minimized flexing and full modularity</span>
                     <span>A comprehensive alternative system to wall mounting.</span>
-                    <span>Available on MakerWorld</span>
+                    <span class="mt-4">Create your plan here then 3D print from MakerWorld</span>
                 </div>
                 <div class="flex gap-4 justify-center items-center">
                     <UButton 

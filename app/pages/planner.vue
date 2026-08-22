@@ -6,9 +6,9 @@ import { Canvas } from '#components'
 useSeoMeta({
     title: 'DeskMatrix Planner',
     ogTitle: 'DeskMatrix Planner',
-    description: 'Desk mounted solution for MultiBoard',
-    ogDescription: 'Desk mounted solution for MultiBoard',
-    ogImage: '/thumbnail.png'
+    description: 'A multi piece desk mounted solution for MultiBoard, which provides a stable structure, minimized flexing and modularity',
+    ogDescription: 'A multi piece desk mounted solution for MultiBoard, which provides a stable structure, minimized flexing and modularity',
+    ogImage: '/thumbnail.png',
 })
 
 const canvas = useTemplateRef<InstanceType<typeof Canvas>>('canvas')
