@@ -200,8 +200,14 @@ const items = computed<ContextMenuItem[][]>(() => [
             label: 'Paste',
             kbds: ['meta', 'v'],
             onClick: ()=> pastePart()
-        }
-    ],
+        },
+        ...(canvas.value?.canDeleteSelectedPart ?[{
+            label: 'Delete',
+            kbds: ['Delete'],
+            color: 'error',
+            onClick: ()=> canvas.value?.deleteSelectedPart()
+        }] : []),
+    ] as ContextMenuItem[],
 ])
 
 const contextMenuClickPos = ref<Vector2d | null>(null)

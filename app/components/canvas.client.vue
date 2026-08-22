@@ -306,21 +306,19 @@ const rotateSelectedPart = () =>{
   }
 }
 
-onKeyStroke
-  ('r', (e) => {
-    e.preventDefault()
-    rotateSelectedPart()
-  })
+const canDeleteSelectedPart = computed(()=>{
+  return Boolean((selectedPart.value && !selectedItemGroup.value) || (!selectedPart.value && selectedItemGroup.value))
+})
 
-
-
-onKeyStroke
-  ('Delete', (e) => {
+const confirm = useConfirmDialog()
+const deleteSelectedPart = async () =>{
     if (selectedPart.value && !selectedItemGroup.value) {
       removePartFromGroup(selectedPart.value);
       parts.value = parts.value.filter((p) => p.id !== selectedPart.value)
     } else if (!selectedPart.value && selectedItemGroup.value) {
-      if (confirm('Do you really want to delete the whole group?')) {
+      if (await confirm({
+        title: 'Do you really want to delete the whole group?'
+      })) {
         const partsFiltered = parts.value.filter(p => p.group !== selectedItemGroup.value)
         parts.value.filter(p => p.group === selectedItemGroup.value).forEach((p) => {
           removePartFromGroup(p.id)
@@ -328,8 +326,16 @@ onKeyStroke
         parts.value = partsFiltered
       }
     }
+}
+
+onKeyStroke
+  ('r', (e) => {
     e.preventDefault()
+    rotateSelectedPart()
   })
+
+onKeyStroke
+  ('Delete', (e) => deleteSelectedPart())
 
 
 const {setLayer} = useConnectorLayer()
@@ -413,6 +419,8 @@ defineExpose({
   selectedPartState,
   canRotateSelectedPart,
   rotateSelectedPart,
+  canDeleteSelectedPart,
+  deleteSelectedPart
 });
 
 const mouseOverPart = ref<string | null>(null);
