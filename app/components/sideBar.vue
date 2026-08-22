@@ -65,6 +65,13 @@ const items = computed<AccordionItem[]>(()=>[
     },
 ])
 
+const infobarWidthClass = computed(()=>({
+    'w-[calc(100dvw-(var(--sidebar-width-icon)))]': !sideBarOpen.value,
+    'w-[calc(100dvw-(var(--sidebar-width)))]': sideBarOpen.value
+}))
+
+const hideMobileWarning = ref<boolean>(false);
+
 </script>
 <template>
     <div class="flex flex-1 sidebar-w">
@@ -88,11 +95,13 @@ const items = computed<AccordionItem[]>(()=>[
         >   
 
             <template #header="{close, open}">
+                <div v-if="$device.isMobileOrTablet && !hideMobileWarning"  class="absolute right-0 top-0 translate-x-full flex justify-center items-center transition-all bg-red-500/20"
+                :class="infobarWidthClass">
+                    <span class="text-sm  px-4">The planner application is not yet optimized for mobile devices. It may not work as intended</span>
+                    <UButton icon="i-lucide-x"  color="neutral" size="xl" variant="link" @click="hideMobileWarning = true"/>
+                </div>
                 <div class="absolute right-0 bottom-0 translate-x-full flex justify-center transition-all bg-black/20"
-                    :class="{
-                        'w-[calc(100dvw-(var(--sidebar-width-icon)))]': !sideBarOpen,
-                        'w-[calc(100dvw-(var(--sidebar-width)))]': sideBarOpen
-                    }">
+                    :class="infobarWidthClass">
                     <span class="text-sm w-full px-4">Unofficial community tool. Not affiliated with Multiboard LTD.</span>
                 </div>
                 <div class="flex w-full">

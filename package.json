@@ -4,13 +4,14 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "nuxt dev --https",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
     "@nuxt/ui": "^4.10.0",
+    "@nuxtjs/device": "4.0.0",
     "@nuxtjs/google-fonts": "3.2.0",
     "@nuxtjs/seo": "5.3.14",
     "@vueuse/components": "^14.4.0",
