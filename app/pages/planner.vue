@@ -3,6 +3,14 @@ import type { ContextMenuItem, DropdownMenuItem } from '@nuxt/ui'
 import { type Vector2d } from 'konva/lib/types'
 import { Canvas } from '#components'
 
+useSeoMeta({
+    title: 'DeskMatrix Planner',
+    ogTitle: 'DeskMatrix Planner',
+    description: 'Desk mounted solution for MultiBoard',
+    ogDescription: 'Desk mounted solution for MultiBoard',
+    ogImage: '/thumbnail.png'
+})
+
 const canvas = useTemplateRef<InstanceType<typeof Canvas>>('canvas')
 const toast = useToast()
 

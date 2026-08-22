@@ -84,7 +84,7 @@ const items = computed<AccordionItem[]>(()=>[
         >   
 
             <template #header="{close, open}">
-                <div class="absolute right-0 top-0 translate-x-full flex justify-center transition-all bg-black/20"
+                <div class="absolute right-0 bottom-0 translate-x-full flex justify-center transition-all bg-black/20"
                     :class="{
                         'w-[calc(100dvw-(var(--sidebar-width-icon)))]': !sideBarOpen,
                         'w-[calc(100dvw-(var(--sidebar-width)))]': sideBarOpen

@@ -11,6 +11,8 @@
   --clamp-color: var(--ui-color-primary-700);
   --clamp-color-dark: var(--ui-color-primary-800);
   --snap-color: rgb(207, 196, 196);
+
+  --font-sans: 'DM Sans', sans-serif;
 }
 
 @theme static {
