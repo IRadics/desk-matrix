@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="657.5 134.5 111 111">
+    <path
+        d="M688 175.5h10.5v29H688zm39.5 0H738v29h-10.5zm-29-10.5h29v10.5h-29zm0 39.5h29V215h-29zm0-29h29v29h-29zm-35.5 2h25v25h-25z"
+        fill="var(--beam-color)" stroke="var(--stroke-color)" paint-order="fill stroke markers" stroke-miterlimit="10"></path>
+    <path fill="#fff" paint-order="stroke fill markers" d="M677.5 183.5a2 2 0 1 1 0-.002Z"></path>
+    <path fill="var(--beam-color)" stroke="var(--stroke-color)" paint-order="fill stroke markers" d="M738 177.5h25v25h-25z"
+        stroke-miterlimit="10"></path>
+    <path fill="#fff" paint-order="stroke fill markers" d="M752.5 183.5a2 2 0 1 1 0-.002Z"></path>
+    <path fill="var(--beam-color)" stroke="var(--stroke-color)" paint-order="fill stroke markers" d="M700.5 140h25v25h-25z"
+        stroke-miterlimit="10"></path>
+    <path fill="#fff" paint-order="stroke fill markers" d="M708.5 152.5a2 2 0 1 1 0-.002Z"></path>
+    <path fill="var(--beam-color)" stroke="var(--stroke-color)" paint-order="fill stroke markers" d="M700.5 215h25v25h-25z"
+        stroke-miterlimit="10"></path>
+    <path fill="#fff" paint-order="stroke fill markers" d="M708.5 227.5a2 2 0 1 1 0-.002Z"></path>
+    <path fill="var(--snap-color)" paint-order="stroke fill markers"
+        d="m717.21 179.837 5.953 5.953v8.42l-5.953 5.953h-8.42l-5.953-5.953v-8.42l5.953-5.953Z"></path>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="833.5 311 75.5 111">
+    <path
+        d="M868 352h10.5v29H868zm-29-10.5h29V352h-29zm0 39.5h29v10.5h-29zm0-29h29v29h-29zm39.5 2h25v25h-25z"
+        fill="var(--beam-color)" stroke="var(--stroke-color)" paint-order="fill stroke markers" stroke-miterlimit="10"></path>
+    <path fill="#fff" paint-order="stroke fill markers" d="M893 360a2 2 0 1 1 0-.002Z"></path>
+    <path fill="var(--beam-color)" stroke="var(--stroke-color)" paint-order="fill stroke markers" d="M841 316.5h25v25h-25z"
+        stroke-miterlimit="10"></path>
+    <path fill="#fff" paint-order="stroke fill markers" d="M849 329a2 2 0 1 1 0-.002Z"></path>
+    <path fill="var(--beam-color)" stroke="var(--stroke-color)" paint-order="fill stroke markers" d="M841 391.5h25v25h-25z"
+        stroke-miterlimit="10"></path>
+    <path fill="#fff" paint-order="stroke fill markers" d="M849 404a2 2 0 1 1 0-.002Z"></path>
+    <g></g>
+    <g></g>
+    <g></g>
+</svg>

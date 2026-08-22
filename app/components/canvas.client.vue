@@ -127,6 +127,9 @@ const selectedPartState = computed(()=>{
     rotation: partRefs.value?.find((ref)=>ref.id === selectedPart.value)?.rotation ?? 0
   }
 })
+const selectedPartRef = computed(()=>{
+  return partRefs.value?.find(part => part.id === selectedPart.value) ?? null
+})
 
 const onPartClicked = (partId: string) => {
 
@@ -289,18 +292,24 @@ const moveBoardsToTop = async() => {
 
 }
 
+const canRotateSelectedPart = computed(()=>{
+  if(!selectedPart.value) return false;
+  if(!!selectedPartData.value?.group) return false;
+  if(!selectedPartRef.value) return false;
+  if(!selectedPartRef.value.rotate) return false;
+  return true
+})
+
+const rotateSelectedPart = () =>{
+  if(canRotateSelectedPart.value && selectedPartRef.value?.rotate) {
+    selectedPartRef.value.rotate()
+  }
+}
 
 onKeyStroke
   ('r', (e) => {
-    if (selectedPart.value) {
-      const isInGroup = !!selectedPartData.value?.group
-      if(isInGroup) return;
-      const part = partRefs.value?.find(part => part.id === selectedPart.value)
-      if (part && part.rotate) {
-        part.rotate()
-      }
-    }
     e.preventDefault()
+    rotateSelectedPart()
   })
 
 
@@ -401,7 +410,9 @@ defineExpose({
   parts,
   stageNode,
   selectedPartData,
-  selectedPartState
+  selectedPartState,
+  canRotateSelectedPart,
+  rotateSelectedPart,
 });
 
 const mouseOverPart = ref<string | null>(null);

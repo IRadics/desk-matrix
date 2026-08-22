@@ -4,6 +4,7 @@ import type { Vector2d } from 'konva/lib/types'
 import type { ShallowUnwrapRef } from 'vue'
 
 export type RefLike<T> = Ref<T> | ComputedRef<T>
+export type Rotation = 0 | 90 | 180 | 270
 
 export type SnapPoint = {
     id: string,
@@ -46,7 +47,7 @@ export type ExposePartInstance = {
     isDragging: RefLike<boolean>,
     node: RefLike<Group>
     rotate?: () => void
-    rotation?: RefLike<number>
+    rotation?: RefLike<Rotation>
     partType: PartType
     setConnectorLayer?: () => void
     unSetConnectorLayer?: () => void
@@ -65,4 +66,11 @@ export type ConnectorData = {
     node: Node,
     offsetPosition: Vector2d,
     originalParent: Node
+}
+
+export type AdditionalPart = {
+    partName: string,
+    description: string,
+    quantity: number
+    url?: string
 }

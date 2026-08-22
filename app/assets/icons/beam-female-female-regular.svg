@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="822.5 134.5 40 86">
+    <path fill="var(--beam-color)" stroke="var(--stroke-color)" paint-order="fill stroke markers" d="M828 140h29v75h-29z"
+        stroke-miterlimit="10"></path>
+    <path fill="var(--snap-color)" paint-order="stroke fill markers"
+        d="m846.71 154.837 5.953 5.953v8.42l-5.953 5.953h-8.42l-5.953-5.953v-8.42l5.953-5.953Zm0 25 5.953 5.953v8.42l-5.953 5.953h-8.42l-5.953-5.953v-8.42l5.953-5.953Z"></path>
+    <g></g>
+    <g></g>
+</svg>

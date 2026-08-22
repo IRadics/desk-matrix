@@ -11,12 +11,15 @@
   },
   "dependencies": {
     "@nuxt/ui": "^4.10.0",
+    "@nuxtjs/google-fonts": "3.2.0",
+    "@nuxtjs/seo": "5.3.14",
     "@vueuse/components": "^14.4.0",
     "@vueuse/nuxt": "14.4.0",
     "konva": "^10.3.0",
     "nuxt": "^4.5.1",
     "vue": "^3.5.40",
     "vue-konva": "^3.4.0",
+    "vue-konva-to-svg": "^1.0.0",
     "vue-router": "^5.2.0"
   }
 }

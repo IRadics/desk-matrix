@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="904 348 50 86">
+  <path fill="var(--clamp-color)" stroke="var(--stroke-color)" paint-order="fill stroke markers" d="M909.5 378.5h39v50h-39z"
+    stroke-miterlimit="10"></path>
+  <path fill="var(--clamp-color-dark)" stroke="var(--stroke-color)" paint-order="fill stroke markers"
+    d="M909.5 393.5h39v10h-39zm0 25h39v10h-39z" stroke-miterlimit="10"></path>
+  <path fill="var(--clamp-color)" stroke="var(--stroke-color)" paint-order="fill stroke markers" d="M914.5 353.5h29v25h-29z"
+    stroke-miterlimit="10"></path>
+  <g></g>
+</svg>

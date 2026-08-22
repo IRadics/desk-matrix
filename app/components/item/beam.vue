@@ -1,54 +1,6 @@
 <script setup lang="ts">
 import { Group as VGroup, Rect as VRect, RegularPolygon as VRegularPolygon, Circle as VCircle, Text as VText, type VueKonvaRef, } from 'vue-konva';
 import {Shape,} from 'konva/lib/Shape'
-import  Konva from 'konva';
-
-function rotateAroundLocalPoint(
-  node: Konva.Node,
-  pivot: { x: number; y: number },
-  degrees: number,
-  targetPosition?: { x: number; y: number },
-) {
-  // Current absolute position of the local pivot
-  const pivotBefore = node
-    .getAbsoluteTransform()
-    .point(pivot);
-
-  // Rotate the node
-  node.rotation(node.rotation() + degrees);
-
-  // Position of the same local pivot after rotation
-  const pivotAfter = node
-    .getAbsoluteTransform()
-    .point(pivot);
-
-  // Where we want the pivot to be.
-  // If omitted, keep its original position.
-  const target = targetPosition ?? pivotBefore;
-
-  // Required movement of the pivot in absolute coordinates
-  const dx = target.x - pivotAfter.x;
-  const dy = target.y - pivotAfter.y;
-
-  const parent = node.getParent();
-
-  if (!parent) {
-    node.x(node.x() + dx);
-    node.y(node.y() + dy);
-    return;
-  }
-
-  // Convert the absolute movement into the parent's coordinate system
-  const parentTransform = parent.getAbsoluteTransform();
-  const inverse = parentTransform.copy().invert();
-
-  const p1 = inverse.point({ x: 0, y: 0 });
-  const p2 = inverse.point({ x: dx, y: dy });
-
-  node.x(node.x() + p2.x - p1.x);
-  node.y(node.y() + p2.y - p1.y);
-}
-
 
 const props = defineProps({
     id: {
@@ -134,12 +86,6 @@ const highlightSnapPoint = (id : string | null) =>{
 const rotation = ref<number>(props.initialRotation)
 const rotate = () => {
     rotation.value = (rotation.value + 90) % 360
-    rotateAroundLocalPoint(node.value, {
-        x: BEAMWIDTH / 2,
-        y: beamLength.value / 2,
-    }, 90,
-    node.value.getStage()?.getRelativePointerPosition() ?? undefined
-)
 }
 
 const getTextWidth = (): number => {
