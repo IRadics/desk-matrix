@@ -67,19 +67,23 @@ const items = computed<AccordionItem[]>(()=>[
 
 </script>
 <template>
-    <div class="flex flex-1">
+    <div class="flex flex-1 sidebar-w">
         <USidebar 
             v-model:open="sideBarOpen" 
             collapsible="icon" 
+            mode="slideover"
+            class="sidebar"
+            :style="{ '--sidebar-width': 'calc(min(320px,100vw))' ,
 
-            :style="{ '--sidebar-width': '320px' }"
+            }"
             :ui="{
                 root: 'block!',
                 container: 'absolute top-(--ui-header-height) bottom-0 h-[calc(100%-var(--ui-header-height))] block!',
                 inner: 'bg-elevated/25 bg-neutral-800',
-                body: 'py-0 px-0',
+                body: 'py-0 px-0 sidebar-w' ,
                 gap: 'h-[calc(100%-var(--ui-header-height))]',
-                header: 'border-gray-300'
+                header: 'border-gray-300 sidebar-w',
+                wrapper: ''
             }"
         >   
 
@@ -89,7 +93,7 @@ const items = computed<AccordionItem[]>(()=>[
                         'w-[calc(100dvw-(var(--sidebar-width-icon)))]': !sideBarOpen,
                         'w-[calc(100dvw-(var(--sidebar-width)))]': sideBarOpen
                     }">
-                    <span class="text-sm">Unofficial community tool. Not affiliated with Multiboard LTD.</span>
+                    <span class="text-sm w-full px-4">Unofficial community tool. Not affiliated with Multiboard LTD.</span>
                 </div>
                 <div class="flex w-full">
                     <div v-if="open" class="text-lg font-bold  w-full">Bill of Materials</div>
@@ -182,3 +186,8 @@ const items = computed<AccordionItem[]>(()=>[
         </USidebar>
     </div>
 </template>
+<style lang="css" >
+.sidebar-w {
+    max-width: calc(min(100%,100vw));
+}
+</style>
