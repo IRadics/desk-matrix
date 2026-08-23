@@ -10,7 +10,7 @@ const props = defineProps({
     }
 })
 
-const partsGroupedDmf = computed(()=>{
+const partsGroupedDm = computed(()=>{
     return groupParts(props.parts,['2-way-corner', '3-way-corner', '4-way-corner', 'beam', 'clamp'])
 })
 const partsGroupedMb = computed(()=>{
@@ -23,7 +23,7 @@ const additionalParts = computed(()=>{
 
 
 
-const partsGroupedDmfCount =  computed(()=>partsGroupedDmf.value.flatMap((v)=>v).length)
+const partsGroupedDmCount =  computed(()=>partsGroupedDm.value.flatMap((v)=>v).length)
 const partsGroupedMbCount =  computed(()=>partsGroupedMb.value.flatMap((v)=>v).length)
 const boltCount = computed(()=> additionalParts.value.bolts.reduce(
     (acc, value)=>{
@@ -40,10 +40,10 @@ const otherCount = computed(()=> additionalParts.value.other.reduce(
 
 const items = computed<AccordionItem[]>(()=>[
     {
-        label: 'DMF parts',
+        label: 'DeskMatrix parts',
         icon: 'i-lucide-triangle',
-        slot: 'dmf-parts',
-        itemCount: partsGroupedDmfCount.value,
+        slot: 'dm-parts',
+        itemCount: partsGroupedDmCount.value,
     },
     {
         label: 'MultiBoard parts',
@@ -126,10 +126,10 @@ const hideMobileWarning = ref<boolean>(false);
                             />
                         </div>
                     </template>
-                    <template #dmf-parts>
+                    <template #dm-parts>
                         <div class="divide-y divide-default">
-                            <template v-if="partsGroupedDmf.length">
-                                <SideBarPart v-for="groupedParts in partsGroupedDmf" :parts="groupedParts"/>
+                            <template v-if="partsGroupedDm.length">
+                                <SideBarPart v-for="groupedParts in partsGroupedDm" :parts="groupedParts"/>
                             </template>
                             <template v-else>
                                 <div class="ms-4 py-4 italic text-sm opacity-70">
