@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "multiboard-dmf",
+      "name": "desk-matrix",
       "dependencies": {
         "@nuxt/ui": "^4.10.0",
         "@nuxtjs/device": "4.0.0",

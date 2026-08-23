@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type Konva from 'konva';
-import {Layer as VLayer, Shape as VShape} from 'vue-konva'
+import {Layer as VLayer, Shape as VShape, type VueKonvaRef} from 'vue-konva'
 
 defineProps({
   visible: {
@@ -40,9 +40,17 @@ function drawGrid(
 
   context.strokeShape(shape);
 }
+
+const layer = useTemplateRef<VueKonvaRef<Layer>>('layer')
+  
+// make sure the grid player is the first
+watch(layer, () => {
+  layer.value?.getNode().setZIndex(1)
+}, { once: true })
 </script>
 <template>
   <v-layer 
+    ref="layer"
     :listening="false" 
     :config="({
     visible: visible

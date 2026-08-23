@@ -225,7 +225,7 @@ const menuUiConfig = {
 }
 </script>
 <template>
-    <div class=" bg-gray-800">
+    <div class=" bg-neutral-500">
         <SideBar :parts="parts"/>
         <div class="flex gap-2 h-(--ui-header-height) bg-neutral-900 items-center px-2 md:px-8 justify-center">
             <UIcon class=" h-[60px] mr-auto shrink-0 hidden md:block" :size="60" name="i-custom-logo" />
