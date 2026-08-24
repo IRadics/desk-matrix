@@ -317,6 +317,56 @@ const menuUiConfig = {
                 </UDropdownMenu>
             </div>
         </div>
+        <UCollapsible class="absolute top-(--ui-header-height) z-50 right-0 flex flex-col  w-50">
+            <UButton
+                label="Help"
+                color="neutral"
+                variant="subtle"
+                class="group bg-neutral-900/50 rounded-none "
+                trailing-icon="i-lucide-chevron-down"
+                :ui="{
+                    trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
+                }"
+                block
+            />
+
+            <template #content>
+            <div class="bg-neutral-900/50 flex flex-col gap-1 px-4 py-2">
+                <USeparator class="mb-2" color="primary" label="Controls"/>
+                <div class="flex items-center">
+                    <UIcon name="i-lucide-mouse-left" :size="20" />
+                    <span class="ms-auto">Select / drag</span>
+                </div>
+                <div class="flex items-center">
+                    <UIcon name="i-lucide-mouse-right" :size="20" />
+                    <span class="ms-auto">Context menu</span>
+                </div>
+                <div class="flex">
+                    <UBadge label="R" variant="outline" color="neutral"   />
+                    <span class="ms-auto">Rotate</span>
+                </div>
+                <div class="flex">
+                    <UBadge label="CTRL" variant="outline" color="neutral"   />
+                    <UBadge label="C" variant="outline" color="neutral"/>
+                    <span class="ms-auto">Copy</span>
+                </div>
+                <div class="flex">
+                    <UBadge label="CTRL" variant="outline" color="neutral"   />
+                    <UBadge label="V" variant="outline" color="neutral"/>
+                    <span class="ms-auto">Paste</span>
+                </div>
+                <div class="flex">
+                    <UBadge label="DELETE" variant="outline" color="neutral"   />
+                    <span class="ms-auto">Delete</span>
+                </div>
+                <USeparator class="mt-4 mb-2" color="primary" label="Tips"/>
+                <ul class=" list-inside list-disc text-sm flex flex-col gap-1">
+                    <li>Clicking on a snapped group twice selects the individual part, which you can disconnect by dragging it away</li>
+                    <li>Currently you can only connect individual parts to other parts or groups. Group -> Group connection is not implemented yet</li>
+                </ul>
+            </div>
+            </template>
+        </UCollapsible>
         <UContextMenu 
             :items="items"  
             size="xl" 
