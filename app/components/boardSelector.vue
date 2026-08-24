@@ -35,14 +35,15 @@ const emit = defineEmits<{
 
 </script>
 <template>
-    <div class="flex justify-center font-bold text-lg">
-        {{ coordinate?.x }} {{ coordinate ? 'X' : 'Select size' }} {{ coordinate?.y }}
-    </div>
-    <div class="grid grid-cols-12 gap-2 p-2" @click="selectSize">
-        <div v-for="i in 12 * 12" class="aspect-square! h-5 w-5 bg-gray-700 octa" :class="{
-            'bg-gray-400!': highlightedIndices.includes(i)
-        }" @mouseover="onMouseOver(i)">
-
+    <div class="flex flex-col">
+        <div class="flex justify-center font-bold text-lg">
+            {{ coordinate?.x }} {{ coordinate ? 'X' : 'Select size' }} {{ coordinate?.y }}
+        </div>
+        <div class="grid grid-cols-12 gap-2 p-2" @click="selectSize">
+            <div v-for="i in 12 * 12" class="aspect-square! h-5 w-5 bg-gray-700 octa" :class="{
+                'bg-gray-400!': highlightedIndices.includes(i)
+            }" @mouseover="onMouseOver(i)">
+            </div>
         </div>
     </div>
 </template>

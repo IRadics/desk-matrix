@@ -36,7 +36,6 @@ const addPart= (part: AddPartData, position?: Vector2d) =>{
     })
 }
 
-
 const beamDropdownItems = ref<DropdownMenuItem[][]>([[]])
 beamDropdownItems.value[0]?.push(({
     label: 'Connector type',
@@ -200,8 +199,14 @@ const items = computed<ContextMenuItem[][]>(() => [
             label: 'Paste',
             kbds: ['meta', 'v'],
             onClick: ()=> pastePart()
-        }
-    ],
+        },
+        ...(canvas.value?.canDeleteSelectedPart ?[{
+            label: 'Delete',
+            kbds: ['Delete'],
+            color: 'error',
+            onClick: ()=> canvas.value?.deleteSelectedPart()
+        }] : []),
+    ] as ContextMenuItem[],
 ])
 
 const contextMenuClickPos = ref<Vector2d | null>(null)
@@ -220,12 +225,12 @@ const menuUiConfig = {
 }
 </script>
 <template>
-    <div class=" bg-gray-800">
+    <div class=" bg-neutral-500">
         <SideBar :parts="parts"/>
         <div class="flex gap-2 h-(--ui-header-height) bg-neutral-900 items-center px-2 md:px-8 justify-center">
             <UIcon class=" h-[60px] mr-auto shrink-0 hidden md:block" :size="60" name="i-custom-logo" />
             <UIcon class=" h-[60px] mr-auto shrink-0 block md:hidden py-2" :size="60" name="i-custom-logo-small" />
-            <div class="mx-auto flex gap-2">
+            <div class="me-auto flex gap-2">
                 <UDropdownMenu :items="beamDropdownItems" :ui="menuUiConfig" size="xl" >
                     <UButton 
                         size="xl"
@@ -281,24 +286,26 @@ const menuUiConfig = {
                         <span class="hidden lg:block">Clamp</span>
                     </template>
                 </UButton>
-                <UDropdownMenu>
+                <UDropdownMenu :items="[{
+                    class: 'before:bg-transparent!',
+                }]" ref="boardselect">
                     <UButton
-                    size="xl"
-                    variant="outline"
-                    leading-icon="i-lucide-plus" 
-                    class="gap-0 md:gap-2 px-2 md:px-3"
-                    style=" --tw-ring-color: var(--ui-primary)">
-                    
-                    <template #leading>
-                        <div class="aspect-square w-8 flex justify-center items-center">
-                            <UIcon name="i-custom-board" :size="32"/>
-                        </div>
-                    </template>   
-                    <template #default>
-                       <span class="hidden lg:block"> Board</span>
-                    </template>
-                </UButton>
-                    <template #content-bottom>
+                        size="xl"
+                        variant="outline"
+                        leading-icon="i-lucide-plus" 
+                        class="gap-0 md:gap-2 px-2 md:px-3"
+                        style=" --tw-ring-color: var(--ui-primary)"> 
+                        
+                        <template #leading>
+                            <div class="aspect-square w-8 flex justify-center items-center">
+                                <UIcon name="i-custom-board" :size="32"/>
+                            </div>
+                        </template>   
+                        <template #default>
+                        <span class="hidden lg:block"> Board</span>
+                        </template>
+                    </UButton>
+                    <template #item>
                         <BoardSelector @selected="(size)=>{
                             addPart({
                                 partType: 'board',

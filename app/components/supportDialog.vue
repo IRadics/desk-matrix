@@ -24,7 +24,7 @@ const open = defineModel('open', {
                 <span class="font-bold text-center ">You can support me in the following ways: </span>
             </div>
             <div class="flex flex-col gap-4 items-center mt-6 px-10">
-                <UButton size="xl" class="w-full flex justify-between" to="https://makerworld.com/en/models/9031310" target="_blank" trailing-icon="i-custom-maker-world">Boost my model on MakerWorld</UButton>
+                <UButton size="xl" class="w-full flex justify-between" to="https://makerworld.com/en/models/3214047-deskmatrix-desk-mount-framework-for-multiboard#profileId-3638506" target="_blank" trailing-icon="i-custom-maker-world">Boost my model on MakerWorld</UButton>
                 <UButton size="xl" class="w-full flex justify-between" to="https://buymeacoffee.com/iradics" target="_blank" trailing-icon="i-lucide-pizza">Buy me a pizza</UButton>
             </div>
         </template>

@@ -6,7 +6,8 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxt/ui',
     '@nuxtjs/google-fonts',
-    '@nuxtjs/seo'
+    '@nuxtjs/seo',
+    '@nuxtjs/device'
   ],
   site: {
     url: 'https://deskmatrix.io',
