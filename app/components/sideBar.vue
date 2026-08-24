@@ -72,6 +72,52 @@ const infobarWidthClass = computed(()=>({
 
 const hideMobileWarning = ref<boolean>(false);
 
+const downloadPartList = () => {
+
+    let text: string = '';
+
+    if (partsGroupedDmCount.value > 0) {
+        text = textHeading('DeskMatrix parts');
+        partsGroupedDm.value.forEach((partList) => {
+            const part = partList[0];
+            if (part) {
+                const specs = getPartSpecs(part)
+                text = `${text}\n\n${partList.length}x - ${specs?.type}${specs?.specs ? `\n${specs.specs}` : ''}`.trim()
+            }
+        })
+    }
+
+    if (partsGroupedMbCount.value > 0) {
+        text = `${text}\n\n\n${textHeading('MultiBoard parts')}`;
+        partsGroupedMb.value.forEach((partList) => {
+            const part = partList[0];
+            if (part) {
+                const specs = getPartSpecs(part)
+                text = `${text}\n\n${partList.length}x - ${specs?.type}${specs?.specs ? `\n${specs.specs}` : ''}`.trim()
+            }
+        })
+    }
+
+    if (boltCount.value > 0) {
+        text = `${text}\n\n\n${textHeading('Bolts')}`;
+        text = `${text}\nNOTE: the calculation assumes that male connectors are used`;
+        additionalParts.value.bolts.forEach((bolt) => {
+            text = `${text}\n\n${bolt.quantity}x - ${bolt.partName}`
+        })
+    }
+
+
+
+    if (otherCount.value > 0) {
+        text = `${text}\n\n\n${textHeading('Additional parts')}`;
+        additionalParts.value.other.forEach((other) => {
+            text = `${text}\n\n${other.quantity}x - ${other.partName}`
+        })
+    }
+
+    downloadTxtFile(text, 'DeskMatrix_part-list.txt');
+}
+
 </script>
 <template>
     <div class="flex flex-1 sidebar-w">
@@ -104,13 +150,25 @@ const hideMobileWarning = ref<boolean>(false);
                     :class="infobarWidthClass">
                     <span class="text-sm w-full px-4">Unofficial community tool. Not affiliated with Multiboard LTD.</span>
                 </div>
-                <div class="flex w-full">
-                    <div v-if="open" class="text-lg font-bold  w-full">Bill of Materials</div>
-                    <UButton v-if="open" icon="i-lucide-chevron-left" @click="close"></UButton>
+                <div class="flex w-full items-center gap-4">
+                    <div  v-if="open" class="flex flex-col  w-full">
+                        <div class="text-lg font-bold  w-full">Bill of Materials</div>
+                        <UButton 
+                            :disabled="parts.length === 0" 
+                            class=" disabled:text-neutral-400 w-full text-center cursor-pointer px-0" 
+                            variant="link"  
+                            @click="downloadPartList">
+                            Download list
+                        </UButton>
+                    </div>
+
+                    
+                    <UButton v-if="open" icon="i-lucide-chevron-left" class="h-fit" @click="close"></UButton>
                     <UButton v-if="!open" icon="i-lucide-chevron-right" @click="sideBarOpen = true"></UButton>
                 </div>
             </template>
             <template v-if="sideBarOpen" >
+
                 <UAccordion :items="items" type="multiple"  :ui="{
                     item: 'border-gray-300',
                     header: 'px-2'
