@@ -223,13 +223,35 @@ const menuUiConfig = {
     item: 'flex items-center',
     itemLeadingIcon: 'h-12 w-12'
 }
+
+useEventListener(window, 'beforeunload', (event) => {
+    if (parts.value.length > 0) {
+        event.preventDefault()
+        // Modern browsers require setting returnValue to a blank string or true
+        event.returnValue = ''
+    }
+})
+
+onBeforeRouteLeave(async (to, from) => {
+  if (parts.value.length > 0) {
+    const confirmLeave = window.confirm('The changes you have made will be lost. Are you sure you want to leave?')
+    if (!confirmLeave) {
+      return false // Aborts the internal router navigation
+    }
+  }
+})
+
 </script>
 <template>
     <div class=" bg-neutral-500">
         <SideBar :parts="parts"/>
         <div class="flex gap-2 h-(--ui-header-height) bg-neutral-900 items-center px-2 md:px-8 justify-center">
-            <UIcon class=" h-[60px] mr-auto shrink-0 hidden md:block" :size="60" name="i-custom-logo" />
-            <UIcon class=" h-[60px] mr-auto shrink-0 block md:hidden py-2" :size="60" name="i-custom-logo-small" />
+            <NuxtLink class="mr-auto shrink-0 hidden md:block" to="/">
+                <UIcon class="h-[60px]" :size="60" name="i-custom-logo" />
+            </NuxtLink>
+            <NuxtLink class="mr-auto shrink-0 block md:hidden" to="/">
+                <UIcon class=" h-[60px] py-2" :size="60" name="i-custom-logo-small" />
+            </NuxtLink>
             <div class="me-auto flex gap-2">
                 <UDropdownMenu :items="beamDropdownItems" :ui="menuUiConfig" size="xl" >
                     <UButton 
