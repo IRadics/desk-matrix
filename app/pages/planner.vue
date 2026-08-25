@@ -13,6 +13,8 @@ useSeoMeta({
 
 const canvas = useTemplateRef<InstanceType<typeof Canvas>>('canvas')
 const toast = useToast()
+const { boardVisibility, setBoardVisibility, visibilityItems, beamVisibility, setBeamVisibility } = useItemSettings()
+const { sideBarOpen } = useSideBar()
 
 const parts = computed<Part[]>((): Part[] => {
     return canvas.value?.parts ?? []
@@ -244,7 +246,7 @@ onBeforeRouteLeave(async (to, from) => {
 </script>
 <template>
     <div class=" bg-neutral-500">
-        <SideBar :parts="parts"/>
+        <SideBar :parts="parts" v-model="sideBarOpen"/>
         <div class="flex gap-2 h-(--ui-header-height) bg-neutral-900 items-center px-2 md:px-8 justify-center">
             <NuxtLink class="mr-auto shrink-0 hidden md:block" to="/">
                 <UIcon class="h-[60px]" :size="60" name="i-custom-logo" />
@@ -339,6 +341,58 @@ onBeforeRouteLeave(async (to, from) => {
                 </UDropdownMenu>
             </div>
         </div>
+        <UCollapsible 
+            class="absolute top-(--ui-header-height) z-50 flex flex-col w-80 transition-all ease-out duration-200" 
+            :class="{
+                'left-(--sidebar-width)': sideBarOpen,
+                'left-(--sidebar-width-icon)': !sideBarOpen,
+            }"
+        >
+            <UButton
+                label="Part visibility"
+                color="neutral"
+                variant="subtle"
+                class="group bg-neutral-900/50 rounded-none "
+                trailing-icon="i-lucide-chevron-down"
+                :ui="{
+                    trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
+                }"
+                block
+            />
+            <template #content>
+                <div class="bg-neutral-900/50 flex flex-col gap-2 px-4 py-2 ">
+                    <USeparator label="Board" color="primary"/>
+                    <URadioGroup 
+                        size="sm" 
+                        :ui="{
+                            base: '[--tw-ring-color:var(--ui-color-primary-700)]!',
+                            item: ' not-data-[state=checked]:border-primary-700 h-7 items-center',
+                            fieldset: 'justify-between'
+                        }"
+                        orientation="horizontal" 
+                        variant="card"
+                        v-model:model-value="boardVisibility" 
+                        :items="visibilityItems" 
+                        @update:model-value="(v)=>setBoardVisibility(v as Visibility ?? Visibility.normal)"  
+                    />
+                    <USeparator class="mt-4" label="Frame" color="primary"/>
+                    <URadioGroup 
+                        size="sm" 
+                        class="justify-center"
+                       :ui="{
+                            base: '[--tw-ring-color:var(--ui-color-primary-700)]!',
+                            item: ' not-data-[state=checked]:border-primary-700 h-7 items-center',
+                            fieldset: 'justify-between'
+                        }"
+                        orientation="horizontal" 
+                        variant="card"
+                        v-model:model-value="beamVisibility" 
+                        :items="visibilityItems" 
+                        @update:model-value="(v)=>setBeamVisibility(v as Visibility ?? Visibility.normal)"  
+                    />
+                </div>
+            </template>
+        </UCollapsible>
         <UCollapsible class="absolute top-(--ui-header-height) z-50 right-0 flex flex-col  w-50">
             <UButton
                 label="Help"
@@ -356,29 +410,33 @@ onBeforeRouteLeave(async (to, from) => {
             <div class="bg-neutral-900/50 flex flex-col gap-1 px-4 py-2">
                 <USeparator class="mb-2" color="primary" label="Controls"/>
                 <div class="flex items-center">
-                    <UIcon name="i-lucide-mouse-left" :size="20" />
+                    <UIcon name="i-lucide-mouse-left" class="[&_circle]:text-primary-500" :size="24" />
                     <span class="ms-auto">Select / drag</span>
                 </div>
                 <div class="flex items-center">
-                    <UIcon name="i-lucide-mouse-right" :size="20" />
+                    <UIcon name="i-lucide-mouse-right" class="[&_circle]:text-primary-500" :size="24" />
                     <span class="ms-auto">Context menu</span>
                 </div>
+                <div class="flex items-center">
+                    <UIcon name="i-lucide-mouse" class="[&_path]:text-primary-500" :size="24" />
+                    <span class="ms-auto">Zoom in / out</span>
+                </div>
                 <div class="flex">
-                    <UBadge label="R" variant="outline" color="neutral"   />
+                    <UBadge label="R" variant="outline" color="neutral" />
                     <span class="ms-auto">Rotate</span>
                 </div>
                 <div class="flex">
-                    <UBadge label="CTRL" variant="outline" color="neutral"   />
+                    <UBadge label="CTRL" variant="outline" color="neutral"/>
                     <UBadge label="C" variant="outline" color="neutral"/>
                     <span class="ms-auto">Copy</span>
                 </div>
                 <div class="flex">
-                    <UBadge label="CTRL" variant="outline" color="neutral"   />
+                    <UBadge label="CTRL" variant="outline" color="neutral"/>
                     <UBadge label="V" variant="outline" color="neutral"/>
                     <span class="ms-auto">Paste</span>
                 </div>
                 <div class="flex">
-                    <UBadge label="DELETE" variant="outline" color="neutral"   />
+                    <UBadge label="DELETE" variant="outline" color="neutral"/>
                     <span class="ms-auto">Delete</span>
                 </div>
                 <USeparator class="mt-4 mb-2" color="primary" label="Tips"/>

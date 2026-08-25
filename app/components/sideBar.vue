@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { AccordionItem } from '@nuxt/ui'
 
-const sideBarOpen = ref<boolean>(true)
+const sideBarOpen = defineModel<boolean>()
 
 const props = defineProps({
     parts: {
@@ -100,7 +100,7 @@ const downloadPartList = () => {
 
     if (boltCount.value > 0) {
         text = `${text}\n\n\n${textHeading('Bolts')}`;
-        text = `${text}\nNOTE: the calculation assumes that male connectors are used`;
+        text = `${text}\nNOTE: the calculation assumes that all male connectors are used`;
         additionalParts.value.bolts.forEach((bolt) => {
             text = `${text}\n\n${bolt.quantity}x - ${bolt.partName}`
         })
@@ -209,7 +209,7 @@ const downloadPartList = () => {
                         </div>
                     </template>
                     <template #bolts>
-                        <div class="italic px-2 text-sm"><strong>NOTE:</strong> the calculation assumes that male connectors are used</div>
+                        <div class="italic px-2 text-sm"><strong>NOTE:</strong> the calculation assumes that all male connectors are used</div>
                         <div class="divide-y divide-default">
                             <template  v-if="boltCount > 0">
                                 <AdditionalPart v-for="part in additionalParts.bolts" :part />

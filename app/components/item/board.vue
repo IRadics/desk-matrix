@@ -31,6 +31,8 @@ const props = defineProps({
     },
 })
 
+const { boardSettings } = useItemSettings()
+
 const groupRef = useTemplateRef<VueKonvaRef<Group>>('group')
 const node = computed(() => {
     return groupRef.value?.getNode()!
@@ -128,11 +130,12 @@ watch(()=>props.selected,(value)=>{
 <template>
     <v-group 
         ref="group"
-        :config="({
+        :config="(({
             draggable: !props.draggingDisabled, 
             x: initialPosition.x,
             y: initialPosition.y,
-        }) as GroupConfig"
+           ...boardSettings
+        }) as GroupConfig)"
         @dragstart="isDragging = true; emit('dragging', true)" 
         @dragend="isDragging = false; emit('dragging', false)"
         @dragmove=" emit('dragging', true)"
