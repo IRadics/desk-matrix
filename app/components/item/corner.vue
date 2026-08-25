@@ -38,6 +38,7 @@ const props = defineProps({
     }
 })
 
+const { beamSettings } = useItemSettings()
 const _snapPointRefs = ref<Ref<VueKonvaRef<Shape>>[]>([])
 for (let i = 1; i <= 8; i++) {
     // @ts-expect-error-next-line
@@ -175,7 +176,8 @@ defineExpose<ExposePartInstance>({
             draggable: !props.draggingDisabled,
             x: initialPosition.x,
             y: initialPosition.y,
-                rotation: rotation,
+            rotation: rotation,
+            ...beamSettings
         } as GroupConfig)" 
         @dragstart="isDragging = true; emit('dragging', true)"
         @dragend="isDragging = false; emit('dragging', false)" 

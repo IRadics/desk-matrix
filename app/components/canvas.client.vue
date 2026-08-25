@@ -13,9 +13,10 @@ const canvasConfig  = computed<StageConfig>(()=> ({
 import { Stage as VStage, Layer as VLayer, Group as VGroup, type VueKonvaRef, Shape as VShape } from 'vue-konva';
 import {type KonvaPointerEvent, } from 'konva/lib/PointerEvents'
 import type { Stage } from 'konva/lib/Stage';
-import type Konva from 'konva';
 
 const snapDistance = 40;
+
+const { beamSettings } = useItemSettings()
 
 const parts = ref<Part[]>([])
 
@@ -460,6 +461,9 @@ const mouseCursor = computed(() => {
         <v-layer
           id="connectorLayer"
           ref="connectorLayer"
+          :config="({
+            ...beamSettings
+          } as LayerConfig)"
         />
         <v-layer >
             <ItemGroup v-for="(group, id) in groups" :key="id" 

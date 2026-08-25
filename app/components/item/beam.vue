@@ -49,6 +49,8 @@ const node = computed(() => {
 
 const textRef = useTemplateRef<VueKonvaRef<TextKonva>>('text')
 
+const { beamSettings } = useItemSettings()
+
 
 const _snapPointRefs = ref<Ref<VueKonvaRef<Shape>>[]>([])
 for (let i = 1; i <= 8; i++) {
@@ -145,6 +147,7 @@ defineExpose<ExposePartInstance>({
             rotation: rotation,
             x: initialPosition.x,
             y: initialPosition.y,
+            ...beamSettings
         } as GroupConfig)"  
         @dragstart="isDragging = true; emit('dragging', true)" 
         @dragend="isDragging = false; emit('dragging', false)"

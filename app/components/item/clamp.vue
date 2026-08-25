@@ -29,6 +29,8 @@ const props = defineProps({
 const clampWidth = BEAMWIDTH + 10;
 const clampX = -(clampWidth - BEAMWIDTH) / 2
 
+const { beamSettings } = useItemSettings()
+
 const groupRef = useTemplateRef<VueKonvaRef<Group>>('group')
 const node = computed(() => {
     return groupRef.value?.getNode()!
@@ -90,7 +92,8 @@ const strokeConfig = computed(() => {
         :config="{
             draggable: !props.draggingDisabled, 
             x: initialPosition.x,
-            y: initialPosition.y
+            y: initialPosition.y,
+            ...beamSettings
         }"  
         @dragstart="isDragging = true; emit('dragging', true)" 
         @dragend="isDragging = false; emit('dragging', false)"

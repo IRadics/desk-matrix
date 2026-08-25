@@ -5,7 +5,7 @@ const getVar = (variable: string) => {
 
 export const BEAMWIDTH = 29;
 export const SNAPRADIUS = 11;
-export const CON_HL_COLOR = 'blue';
+export const CON_HL_COLOR = getVar('--ui-primary');
 export const SNAPCOLOR = getVar('--snap-color')
 
 export const STROKECOLOR = getVar('--stroke-color')
