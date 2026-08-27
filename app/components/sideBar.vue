@@ -144,7 +144,7 @@ const downloadPartList = () => {
                 <div v-if="$device.isMobileOrTablet && !hideMobileWarning"  class="absolute right-0 top-0 translate-x-full flex justify-center items-center transition-all bg-red-500/20"
                 :class="infobarWidthClass">
                     <span class="text-sm  px-4">The planner application is not yet optimized for mobile devices. It may not work as intended</span>
-                    <UButton icon="i-lucide-x"  color="neutral" size="xl" variant="link" @click="hideMobileWarning = true"/>
+                    <UButton aria-label="Dismiss mobile compatibility warning" icon="i-lucide-x"  color="neutral" size="xl" variant="link" @click="hideMobileWarning = true"/>
                 </div>
                 <div class="absolute right-0 bottom-0 translate-x-full flex justify-center transition-all bg-black/20"
                     :class="infobarWidthClass">
@@ -163,8 +163,8 @@ const downloadPartList = () => {
                     </div>
 
                     
-                    <UButton v-if="open" icon="i-lucide-chevron-left" class="h-fit" @click="close"></UButton>
-                    <UButton v-if="!open" icon="i-lucide-chevron-right" @click="sideBarOpen = true"></UButton>
+                    <UButton v-if="open" aria-label="Collapse bill of materials sidebar" icon="i-lucide-chevron-left" class="h-fit" @click="close"></UButton>
+                    <UButton v-if="!open" aria-label="Expand bill of materials sidebar" icon="i-lucide-chevron-right" @click="sideBarOpen = true"></UButton>
                 </div>
             </template>
             <template v-if="sideBarOpen" >

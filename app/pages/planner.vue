@@ -5,9 +5,9 @@ import { Canvas } from '#components'
 
 useSeoMeta({
     title: 'DeskMatrix Planner',
-    ogTitle: 'DeskMatrix Planner',
-    description: 'A multi piece desk mounted solution for MultiBoard, which provides a stable structure, minimized flexing and modularity',
-    ogDescription: 'A multi piece desk mounted solution for MultiBoard, which provides a stable structure, minimized flexing and modularity',
+    ogTitle: 'DeskMatrix Planner - Plan your DeskMatrix layout and 3D print the required parts',
+    description: 'Plan a custom DeskMatrix layout and calculate the beams, corners, clamps, boards and bolts required for your desk-mounted MultiBoard.',
+    ogDescription: 'Plan a custom DeskMatrix layout and calculate the beams, corners, clamps, boards and bolts required for your desk-mounted MultiBoard.',
     ogImage: '/thumbnail.png',
 })
 
@@ -248,15 +248,16 @@ onBeforeRouteLeave(async (to, from) => {
     <div class=" bg-neutral-500">
         <SideBar :parts="parts" v-model="sideBarOpen"/>
         <div class="flex gap-2 h-(--ui-header-height) bg-neutral-900 items-center px-2 md:px-8 justify-center">
-            <NuxtLink class="mr-auto shrink-0 hidden md:block" to="/">
+            <NuxtLink class="mr-auto shrink-0 hidden md:block" to="/" aria-label="DeskMatrix home">
                 <UIcon class="h-[60px]" :size="60" name="i-custom-logo" />
             </NuxtLink>
-            <NuxtLink class="mr-auto shrink-0 block md:hidden" to="/">
+            <NuxtLink class="mr-auto shrink-0 block md:hidden" to="/" aria-label="DeskMatrix home">
                 <UIcon class=" h-[60px] py-2" :size="60" name="i-custom-logo-small" />
             </NuxtLink>
             <div class="me-auto flex gap-2">
                 <UDropdownMenu :items="beamDropdownItems" :ui="menuUiConfig" size="xl" >
                     <UButton 
+                        aria-label="Add beam"
                         size="xl"
                         trailing-icon="i-lucide-chevron-down"  
                         variant="outline"
@@ -275,6 +276,7 @@ onBeforeRouteLeave(async (to, from) => {
                 </UDropdownMenu>
                 <UDropdownMenu :items="cornerDropdownItems" :ui="menuUiConfig" size="xl" >
                     <UButton 
+                        aria-label="Add corner"
                         size="xl"
                         trailing-icon="i-lucide-chevron-down" 
                         variant="outline"
@@ -292,6 +294,7 @@ onBeforeRouteLeave(async (to, from) => {
                     </UButton>
                 </UDropdownMenu>
                 <UButton 
+                    aria-label="Add clamp"
                     size="xl"
                     variant="outline"
                     leading-icon="i-lucide-plus" 
@@ -314,6 +317,7 @@ onBeforeRouteLeave(async (to, from) => {
                     class: 'before:bg-transparent!',
                 }]" ref="boardselect">
                     <UButton
+                        aria-label="Add board"
                         size="xl"
                         variant="outline"
                         leading-icon="i-lucide-plus" 

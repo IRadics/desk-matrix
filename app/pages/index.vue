@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 
 useSeoMeta({
-    title: 'DeskMatrix',
-    ogTitle: 'DeskMatrix',
+    title: 'Desk-Mounted MultiBoard Framework',
+    ogTitle: 'DeskMatrix - Desk-Mounted Framework for MultiBoard',
     description: 'A multi piece desk mounted solution for MultiBoard, which provides a stable structure, minimized flexing and modularity',
     ogDescription: 'A multi piece desk mounted solution for MultiBoard, which provides a stable structure, minimized flexing and modularity',
     ogImage: '/thumbnail.png',
