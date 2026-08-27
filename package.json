@@ -10,17 +10,26 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxt/eslint": "1.17.0",
     "@nuxt/ui": "^4.10.0",
     "@nuxtjs/device": "4.0.0",
     "@nuxtjs/google-fonts": "3.2.0",
     "@nuxtjs/seo": "5.3.14",
     "@vueuse/components": "^14.4.0",
     "@vueuse/nuxt": "14.4.0",
+    "eslint": "^10.9.1",
     "konva": "^10.3.0",
     "nuxt": "^4.5.1",
     "vue": "^3.5.40",
     "vue-konva": "^3.4.0",
     "vue-konva-to-svg": "^1.0.0",
     "vue-router": "^5.2.0"
+  },
+  "devDependencies": {
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
+    "prettier": "^3.9.6",
+    "typescript": "5",
+    "vue-tsc": "^3.3.11"
   }
 }

@@ -1,53 +1,64 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
   modules: [
     '@vueuse/nuxt',
     '@nuxt/ui',
     '@nuxtjs/google-fonts',
     '@nuxtjs/seo',
-    '@nuxtjs/device'
+    '@nuxtjs/device',
+    '@nuxt/eslint',
   ],
-  site: {
-    url: 'https://deskmatrix.io',
-    name: 'DeskMatrix',
-  },
-  ogImage: {
-    enabled: false
-  },
-  css: ['~/assets/css/main.css'],
-  googleFonts: {
-    prefetch: true,
-    families: {
-      'DM Sans': true
-    }
-  },
-  icon: {
-    mode: 'svg',
-    customCollections: [{
-      prefix: 'custom',
-      dir: './app/assets/icons',
-
-    }],
-    clientBundle: {
-      scan: true,
-      includeCustomCollections: true
-    }
-  },
-  colorMode: {
-    preference: 'dark'
-  },
   imports: {
     dirs: [
       // Scans all files directly under app/types
       'types',
       // Optional: Scans nested folders under app/types/
       'types/**',
-      'types/**/*.d.ts'
+      'types/**/*.d.ts',
     ],
   },
+  devtools: { enabled: true },
+  css: ['~/assets/css/main.css'],
+  site: {
+    url: 'https://deskmatrix.io',
+    name: 'DeskMatrix',
+  },
+  colorMode: {
+    preference: 'dark',
+  },
   build: {
-    transpile: ['konva']
-  }
+    transpile: ['konva'],
+  },
+  compatibilityDate: '2025-07-15',
+  eslint: {
+    config: {
+      stylistic: {
+        indent: 2,
+        quotes: 'single',
+        semi: false,
+      },
+    },
+  },
+  googleFonts: {
+    prefetch: true,
+    families: {
+      'DM Sans': true,
+    },
+  },
+  icon: {
+    mode: 'svg',
+    customCollections: [
+      {
+        prefix: 'custom',
+        dir: './app/assets/icons',
+      },
+    ],
+    clientBundle: {
+      scan: true,
+      includeCustomCollections: true,
+    },
+  },
+  ogImage: {
+    enabled: false,
+  },
 })
