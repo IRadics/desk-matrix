@@ -22,6 +22,9 @@ export default defineNuxtConfig({
   site: {
     url: 'https://deskmatrix.io',
     name: 'DeskMatrix',
+    trailingSlash: false,
+    description:
+      'A multi piece desk mounted solution for MultiBoard, which provides a stable structure, minimized flexing and modularity.',
   },
   colorMode: {
     preference: 'dark',
@@ -60,5 +63,11 @@ export default defineNuxtConfig({
   },
   ogImage: {
     enabled: false,
+  },
+  seo: {
+    redirectToCanonicalSiteUrl: true,
+  },
+  sitemap: {
+    zeroRuntime: true,
   },
 })
