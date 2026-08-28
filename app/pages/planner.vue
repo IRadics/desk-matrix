@@ -301,6 +301,15 @@ onBeforeRouteLeave(async () => {
     }
   }
 })
+
+const headingVisible = ref(true)
+useTimeout(8000, {
+  callback: () => {
+    if (headingVisible.value) {
+      headingVisible.value = false
+    }
+  },
+})
 </script>
 
 <template>
@@ -434,6 +443,36 @@ onBeforeRouteLeave(async () => {
           </UDropdownMenu>
         </div>
       </div>
+      <section
+        class="transition-opacity duration-500 absolute top-[calc(var(--ui-header-height)+3.5rem)] left-1/2 z-10 w-[min(36rem,calc(100%-8rem))] -translate-x-1/2"
+        :class="{
+          'opacity-0': !headingVisible,
+          'opacity-100': headingVisible,
+        }"
+      >
+        <div
+          aria-labelledby="planner-heading"
+          class="pointer-events-none rounded-lg border border-default bg-neutral-900/75 px-4 py-3 text-center shadow-lg backdrop-blur-sm"
+        >
+          <h1
+            id="planner-heading"
+            class="text-base font-semibold text-highlighted sm:text-lg"
+          >
+            DeskMatrix Layout Planner
+          </h1>
+          <p class="mt-1 hidden text-sm text-toned md:block">
+            Build a custom DeskMatrix layout with MultiBoard tiles, beams,
+            corners, and clamps. The planner groups the parts, calculates the
+            required parts, and exports a bill of materials for printing.
+          </p>
+        </div>
+        <UButton
+          class="absolute top-2 right-2 z-10"
+          icon="i-lucide-x"
+          variant="ghost"
+          @click="headingVisible = false"
+        />
+      </section>
       <UCollapsible
         class="absolute top-(--ui-header-height) z-50 flex flex-col w-80 transition-all ease-out duration-200"
         :class="{
