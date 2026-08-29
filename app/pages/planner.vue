@@ -574,21 +574,21 @@ useTimeout(8000, {
               <span class="ms-auto">Zoom in / out</span>
             </div>
             <div class="flex">
-              <UBadge label="R" variant="outline" color="neutral" />
+              <UKbd value="R" size="lg" />
               <span class="ms-auto">Rotate</span>
             </div>
-            <div class="flex">
-              <UBadge label="CTRL" variant="outline" color="neutral" />
-              <UBadge label="C" variant="outline" color="neutral" />
+            <div class="flex gap-0.5">
+              <UKbd value="meta" size="lg" />
+              <UKbd value="C" size="lg" />
               <span class="ms-auto">Copy</span>
             </div>
-            <div class="flex">
-              <UBadge label="CTRL" variant="outline" color="neutral" />
-              <UBadge label="V" variant="outline" color="neutral" />
+            <div class="flex gap-0.5">
+              <UKbd value="meta" size="lg" />
+              <UKbd value="V" size="lg" />
               <span class="ms-auto">Paste</span>
             </div>
             <div class="flex">
-              <UBadge label="DELETE" variant="outline" color="neutral" />
+              <UKbd value="Delete" size="lg" />
               <span class="ms-auto">Delete</span>
             </div>
             <USeparator class="mt-4 mb-2" color="primary" label="Tips" />
