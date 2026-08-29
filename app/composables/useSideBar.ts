@@ -1,4 +1,4 @@
-const sideBarOpen = ref<boolean>(false)
+const sideBarOpen = ref<boolean>(true)
 export const useSideBar = () => {
-    return { sideBarOpen }
+  return { sideBarOpen }
 }
