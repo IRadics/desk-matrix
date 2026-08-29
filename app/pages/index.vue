@@ -103,7 +103,7 @@ const scrollTo = (id: string) => {
       <UButton
         variant="subtle"
         size="lg"
-        class="mt-8"
+        class="mt-5 mb-5 lg:mb-0"
         icon="i-lucide-arrow-down"
         @click="scrollTo('section-1')"
       />
@@ -128,7 +128,7 @@ const scrollTo = (id: string) => {
           variant="subtle"
         >
           <div class="bg-neutral-200 rounded-lg mt-auto">
-            <img src="/img/table.webp" />
+            <img class="w-full" src="/img/table.webp" />
           </div>
         </UPageCard>
         <UPageCard
@@ -138,7 +138,7 @@ const scrollTo = (id: string) => {
           variant="subtle"
         >
           <div class="rounded-lg mt-auto overflow-hidden">
-            <img src="/img/animation.webp" />
+            <img class="w-full" src="/img/animation.webp" />
           </div>
         </UPageCard>
         <UPageCard
@@ -148,7 +148,7 @@ const scrollTo = (id: string) => {
           variant="subtle"
         >
           <div class="rounded-lg mt-auto overflow-hidden">
-            <img src="/img/photo.webp" />
+            <img class="w-full" src="/img/photo.webp" />
           </div>
         </UPageCard>
         <UButton
