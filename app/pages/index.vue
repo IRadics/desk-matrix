@@ -12,6 +12,8 @@ useSeoMeta({
 const supportModalOpen = ref<boolean>(false)
 const licenseModalOpen = ref<boolean>(false)
 
+const imageDialog = useImageDialog()
+
 const scrollTo = (id: string) => {
   document.getElementById(id)?.scrollIntoView({
     behavior: 'smooth',
@@ -128,7 +130,7 @@ const scrollTo = (id: string) => {
           variant="subtle"
         >
           <div class="bg-neutral-200 rounded-lg mt-auto">
-            <img class="w-full" src="/img/table.webp" />
+            <ImageEnlargable class="w-full" src="/img/table.webp" />
           </div>
         </UPageCard>
         <UPageCard
@@ -138,7 +140,11 @@ const scrollTo = (id: string) => {
           variant="subtle"
         >
           <div class="rounded-lg mt-auto overflow-hidden">
-            <img class="w-full" src="/img/animation.webp" />
+            <ImageEnlargable
+              class="w-full"
+              src="/img/animation.webp"
+              native-img
+            />
           </div>
         </UPageCard>
         <UPageCard
@@ -148,7 +154,7 @@ const scrollTo = (id: string) => {
           variant="subtle"
         >
           <div class="rounded-lg mt-auto overflow-hidden">
-            <img class="w-full" src="/img/photo.webp" />
+            <ImageEnlargable class="w-full" src="/img/photo.webp" />
           </div>
         </UPageCard>
         <UButton
@@ -175,7 +181,7 @@ const scrollTo = (id: string) => {
       <div class="grid gap-6 md:grid-cols-3 text-left">
         <section class="rounded-lg border border-default bg-default p-6">
           <h3 class="text-xl font-semibold text-highlighted">Clamps</h3>
-          <img src="/img/clamp.webp" />
+          <ImageEnlargable src="/img/clamp.webp" />
           <p class="mt-3 text-toned">
             Select a clamp gap that matches your tabletop. Desk protector plates
             spread the clamping force, while an optional TPU pad can add grip
@@ -184,7 +190,7 @@ const scrollTo = (id: string) => {
         </section>
         <section class="rounded-lg border border-default bg-default p-6">
           <h3 class="text-xl font-semibold text-highlighted">Beams</h3>
-          <img src="/img/beams.webp" />
+          <ImageEnlargable src="/img/beams.webp" />
           <p class="mt-3 text-toned">
             Regular and quad beam variants are available with male and female
             connector combinations. Their snap-based lengths make it easier to
@@ -193,7 +199,7 @@ const scrollTo = (id: string) => {
         </section>
         <section class="rounded-lg border border-default bg-default p-6">
           <h3 class="text-xl font-semibold text-highlighted">Corners</h3>
-          <img src="/img/corner.webp" />
+          <ImageEnlargable src="/img/corner.webp" />
           <p class="mt-3 text-toned">
             Two-way, three-way, and four-way corners connect the frame at its
             edges and intersections, with optional central snap variants for
