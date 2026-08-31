@@ -63,6 +63,10 @@ export default defineNuxtConfig({
     },
   },
   image: {
+    provider: process.env.NODE_ENV === 'development' ? 'ipx' : 'cloudflare',
+    cloudflare: {
+      baseURL: 'https://deskmatrix.io/',
+    },
     format: ['avif', 'webp'],
   },
   ogImage: {
