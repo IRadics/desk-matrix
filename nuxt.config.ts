@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     '@nuxtjs/seo',
     '@nuxtjs/device',
     '@nuxt/eslint',
+    '@nuxt/image',
   ],
   imports: {
     dirs: [
@@ -60,6 +61,9 @@ export default defineNuxtConfig({
       scan: true,
       includeCustomCollections: true,
     },
+  },
+  image: {
+    format: ['avif', 'webp'],
   },
   ogImage: {
     enabled: false,
