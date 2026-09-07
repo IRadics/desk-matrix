@@ -33,6 +33,9 @@ export default defineNuxtConfig({
   build: {
     transpile: ['konva'],
   },
+  routeRules: {
+    '/': { prerender: true },
+  },
   compatibilityDate: '2025-07-15',
   eslint: {
     config: {

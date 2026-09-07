@@ -12,8 +12,6 @@ useSeoMeta({
 const supportModalOpen = ref<boolean>(false)
 const licenseModalOpen = ref<boolean>(false)
 
-const imageDialog = useImageDialog()
-
 const scrollTo = (id: string) => {
   document.getElementById(id)?.scrollIntoView({
     behavior: 'smooth',
