@@ -1,3 +1,10 @@
+Homepage and planner for DeskMatrix - 3d printable desk mounted MultiBoard framework
+
+[deskmatrix.io](https://deskmatrix.io/)
+
+[MakerWorld project](https://makerworld.com/en/models/3214047-deskmatrix-desk-mount-framework-for-multiboard)
+
+
 # Nuxt Minimal Starter
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
